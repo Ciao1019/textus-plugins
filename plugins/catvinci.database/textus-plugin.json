@@ -1,7 +1,7 @@
 {
   "id": "catvinci.database",
   "name": "%name%",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "repository": "https://github.com/CatVinci-Studio/textus-plugins",
   "engines": {
-    "textus": ">=1.3.0-beta.9"
+    "textus": ">=1.3.2"
   },
   "platforms": ["desktop", "ios"],
   "main": [
@@ -55,7 +55,8 @@
     "codeBlocks": [
       {
         "language": "database",
-        "title": "%name%"
+        "title": "%name%",
+        "frame": "none"
       }
     ],
     "aiTools": [
@@ -119,7 +120,7 @@
   },
   "l10n": {
     "en": {
-      "name": "Database",
+      "name": "Database Views",
       "description": "A folder's documents as a table, a board, a calendar or a gallery, their front matter the columns - edit them in place. Imports Notion databases.",
       "new": "New Database…",
       "importNotion": "Import from Notion…",
@@ -183,7 +184,8 @@
       "type.date": "Date",
       "type.checkbox": "Checkbox",
       "type.url": "URL",
-      "deleteAsk": "Delete “{0}” from {1} pages?"
+      "deleteAsk": "Delete “{0}” from {1} pages?",
+      "open": "Open"
     },
     "zh": {
       "name": "数据库视图",
@@ -250,7 +252,8 @@
       "type.date": "日期",
       "type.checkbox": "复选框",
       "type.url": "网址",
-      "deleteAsk": "要从 {1} 个页面中删除“{0}”吗？"
+      "deleteAsk": "要从 {1} 个页面中删除“{0}”吗？",
+      "open": "打开"
     },
     "zh-Hant": {
       "name": "資料庫檢視",
@@ -317,10 +320,11 @@
       "type.date": "日期",
       "type.checkbox": "核取方塊",
       "type.url": "網址",
-      "deleteAsk": "要從 {1} 個頁面中刪除「{0}」嗎？"
+      "deleteAsk": "要從 {1} 個頁面中刪除「{0}」嗎？",
+      "open": "打開"
     },
     "ja": {
-      "name": "データベース",
+      "name": "データベースビュー",
       "description": "フォルダ内の文書を表・ボード・カレンダー・ギャラリーで表示。フロントマターが各列で、その場で編集できます。Notion のデータベースも取り込めます。",
       "new": "新しいデータベース…",
       "importNotion": "Notion から取り込む…",
@@ -384,10 +388,11 @@
       "type.date": "日付",
       "type.checkbox": "チェックボックス",
       "type.url": "URL",
-      "deleteAsk": "{1} ページから「{0}」を削除しますか？"
+      "deleteAsk": "{1} ページから「{0}」を削除しますか？",
+      "open": "開く"
     },
     "ko": {
-      "name": "데이터베이스",
+      "name": "데이터베이스 보기",
       "description": "폴더의 문서를 표·보드·캘린더·갤러리로 보여 줍니다. 프런트 매터가 각 열이며 바로 편집할 수 있습니다. Notion 데이터베이스도 가져옵니다.",
       "new": "새 데이터베이스…",
       "importNotion": "Notion에서 가져오기…",
@@ -451,10 +456,11 @@
       "type.date": "날짜",
       "type.checkbox": "체크박스",
       "type.url": "URL",
-      "deleteAsk": "{1}개 페이지에서 “{0}”을(를) 삭제할까요?"
+      "deleteAsk": "{1}개 페이지에서 “{0}”을(를) 삭제할까요?",
+      "open": "열기"
     },
     "de": {
-      "name": "Datenbank",
+      "name": "Datenbankansichten",
       "description": "Die Dokumente eines Ordners als Tabelle, Board, Kalender oder Galerie, ihr Front Matter als Spalten – direkt bearbeitbar. Importiert Notion-Datenbanken.",
       "new": "Neue Datenbank …",
       "importNotion": "Aus Notion importieren …",
@@ -518,10 +524,11 @@
       "type.date": "Datum",
       "type.checkbox": "Kontrollkästchen",
       "type.url": "URL",
-      "deleteAsk": "„{0}“ aus {1} Seiten löschen?"
+      "deleteAsk": "„{0}“ aus {1} Seiten löschen?",
+      "open": "Öffnen"
     },
     "es": {
-      "name": "Base de datos",
+      "name": "Vistas de base de datos",
       "description": "Los documentos de una carpeta como tabla, tablero, calendario o galería; sus metadatos son las columnas y se editan ahí mismo. Importa bases de datos de Notion.",
       "new": "Nueva base de datos…",
       "importNotion": "Importar desde Notion…",
@@ -585,10 +592,11 @@
       "type.date": "Fecha",
       "type.checkbox": "Casilla",
       "type.url": "URL",
-      "deleteAsk": "¿Eliminar «{0}» de {1} páginas?"
+      "deleteAsk": "¿Eliminar «{0}» de {1} páginas?",
+      "open": "Abrir"
     },
     "fr": {
-      "name": "Base de données",
+      "name": "Vues de base de données",
       "description": "Les documents d’un dossier en tableau, tableau Kanban, calendrier ou galerie ; leurs métadonnées sont les colonnes, modifiables sur place. Importe les bases Notion.",
       "new": "Nouvelle base de données…",
       "importNotion": "Importer depuis Notion…",
@@ -652,10 +660,11 @@
       "type.date": "Date",
       "type.checkbox": "Case à cocher",
       "type.url": "URL",
-      "deleteAsk": "Supprimer « {0} » de {1} pages ?"
+      "deleteAsk": "Supprimer « {0} » de {1} pages ?",
+      "open": "Ouvrir"
     },
     "pt": {
-      "name": "Banco de dados",
+      "name": "Visualizações de banco de dados",
       "description": "Os documentos de uma pasta como tabela, quadro, calendário ou galeria; os metadados são as colunas, editáveis ali mesmo. Importa bancos de dados do Notion.",
       "new": "Novo banco de dados…",
       "importNotion": "Importar do Notion…",
@@ -719,10 +728,11 @@
       "type.date": "Data",
       "type.checkbox": "Caixa de seleção",
       "type.url": "URL",
-      "deleteAsk": "Excluir “{0}” de {1} páginas?"
+      "deleteAsk": "Excluir “{0}” de {1} páginas?",
+      "open": "Abrir"
     },
     "ru": {
-      "name": "База данных",
+      "name": "Представления базы данных",
       "description": "Документы папки как таблица, доска, календарь или галерея; их метаданные — столбцы, правятся на месте. Импортирует базы Notion.",
       "new": "Новая база данных…",
       "importNotion": "Импорт из Notion…",
@@ -786,7 +796,8 @@
       "type.date": "Дата",
       "type.checkbox": "Флажок",
       "type.url": "URL",
-      "deleteAsk": "Удалить «{0}» из страниц ({1})?"
+      "deleteAsk": "Удалить «{0}» из страниц ({1})?",
+      "open": "Открыть"
     }
   }
 }

@@ -43,8 +43,11 @@
       link.append(picture);
     }
     link.addEventListener("click", () => api.postMessage({ type: "open", url: card.url }));
-    const refresh = el("button", "refresh", "↻ " + (m.refresh || ""));
+    const refresh = el("button", "tx-button small refresh");
     refresh.type = "button";
+    const glyph = el("span", "tx-icon");
+    glyph.dataset.icon = "refresh";
+    refresh.append(glyph, m.refresh || "");
     refresh.addEventListener("click", () => api.postMessage({ type: "refresh" }));
     root.replaceChildren(link, refresh);
   });

@@ -6,12 +6,24 @@ function mindMap(el, source, meta, dark) {
   var svg = document.createElementNS(SVG, "svg");
   svg.style.width = "100%";
   svg.style.height = (Number(meta.height) || 360) + "px";
-  svg.style.color = dark ? "#e6e6e6" : "#222222";
+  var c = chartColors(dark);
+  var seen = new Map();
+  svg.style.color = c.ink;
   el.replaceChildren(svg);
   var root = transformer.transform(source).root;
   var map = window.markmap.Markmap.create(
     svg,
-    { autoFit: true, duration: 0 },
+    {
+      autoFit: true,
+      duration: 0,
+      // Branches in the theme's tones, in the order they are met, as
+      // markmap's own ordinal colours are.
+      color: function (node) {
+        var key = String((node.state && node.state.path) || "");
+        if (!seen.has(key)) seen.set(key, seen.size);
+        return c.tones[seen.get(key) % c.tones.length];
+      },
+    },
     root,
   );
   return map.fit();

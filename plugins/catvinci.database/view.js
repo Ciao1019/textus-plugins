@@ -1,13 +1,18 @@
 // A database block's page: the rows host.js sends, as a table (cells
 // edited in place), a board (cards dragged between lists), a calendar or a
-// gallery. Filters, sorts, columns and types are set from menus as in
-// Notion and kept in the block's lines; every change goes back to the host,
-// which writes the documents or the block.
+// gallery. Drawn with Textus's own controls (tx- classes) and menus
+// (api.menu); filters, sorts, columns and types are kept in the block's
+// lines. Every change goes back to the host, which writes the documents or
+// the block; what a menu can't hold (a name, a value) the host asks for.
 (function () {
   "use strict";
   const api = acquireTextusApi();
   const VIEWS = ["table", "board", "calendar", "gallery"];
+  const VIEW_ICONS = { table: "table", board: "board", calendar: "calendar", gallery: "gallery" };
   const TYPES = ["text", "number", "select", "tags", "date", "checkbox", "url"];
+  const TYPE_ICONS = { text: "text", number: "number", select: "select", tags: "multi", date: "date", checkbox: "checkbox", url: "url" };
+  // The order tones are given in (design standard 3.4).
+  const TONES = ["blue", "green", "orange", "purple", "red", "teal", "yellow", "pink", "gray"];
   let data = null;
   let month = null;
   /** A field being typed in: the view waits for it before drawing again. */
@@ -27,83 +32,40 @@
     return node;
   }
   const s = (key) => (data && data.strings && data.strings[key]) || key;
+  const icon = (name) => el("span", { class: "tx-icon", "data-icon": name });
   const typeOf = (key) => (key === "name" ? "text" : data.types[key] || "text");
   const label = (key) => (key === "name" ? s("page") : key);
+  const allKeys = () => ["name"].concat(data.keys);
   /** What the block says, changed: filters, sorts, columns or types. */
   const setSpec = (change) => post({ type: "spec", spec: change });
 
   // ------------------------------------------------------------ values
-  /** An option's colour, one of nine as in Notion: a property's options
-   *  take them in turn, so neighbours differ; a word elsewhere by its letters. */
-  const COLOURS = [210, 140, 30, 265, 0, 45, 320, 180, 25];
-  function hue(word, key) {
-    const i = key && data && data.options[key] ? data.options[key].indexOf(String(word)) : -1;
-    if (i >= 0) return COLOURS[i % COLOURS.length];
-    let h = 0;
-    for (const c of String(word)) h = (h * 31 + c.codePointAt(0)) >>> 0;
-    return COLOURS[h % COLOURS.length];
+  /** An option's tone: its place among its property's options. */
+  function tone(word, key) {
+    const options = (key && data.options[key]) || [];
+    const i = options.indexOf(String(word));
+    return TONES[(i >= 0 ? i : 0) % TONES.length];
   }
-  const tag = (word, key) => el("span", { class: "tag", style: "--tag-hue:" + hue(word, key) }, String(word));
+  const tag = (word, key, status) =>
+    el("span", { class: "tx-tag" + (status ? " status" : ""), "data-tone": tone(word, key) }, String(word));
+  /** A select that reads as a state - status, stage - gets the dot. */
+  const isStatus = (key) => /^(status|state|stage|phase|进度|状态)$/i.test(key || "");
 
   function shown(value, type, key) {
-    if (type === "checkbox") return el("span", { class: "check" + (value === true ? " on" : "") });
+    if (type === "checkbox")
+      return el("input", { type: "checkbox", class: "ui-check", checked: value === true, tabindex: "-1", "aria-label": key });
     if (value === null || value === undefined || value === "") return "";
-    if (Array.isArray(value)) return value.map((v) => tag(v, key));
-    if (type === "select") return tag(value, key);
+    if (Array.isArray(value)) return el("span", { class: "tags" }, value.map((v) => tag(v, key)));
+    if (type === "select") return tag(value, key, isStatus(key));
     if (type === "number" && /^(rate|rating|stars?)$/i.test(key) && value >= 0 && value <= 5)
       return el("span", { class: "stars" }, "★".repeat(Math.round(value)) + "☆".repeat(5 - Math.round(value)));
     if (type === "url") return el("a", { href: value, target: "_blank", onclick: (e) => e.stopPropagation() }, String(value));
     return String(value);
   }
 
-  function pageLink(row) {
-    const icon = typeof row.props.icon === "string" ? row.props.icon + " " : "";
-    return el("button", { type: "button", class: "page-link", onclick: () => post({ type: "open", rel: row.rel }) }, icon + row.name);
-  }
-
-  // ------------------------------------------------------------ popovers
-  let pop = null;
-  function close() {
-    if (pop) pop.remove();
-    pop = null;
-    document.body.style.minHeight = "";
-  }
-  /** A menu under `anchor`, built by `fill(box)`; one at a time. A `kept`
-   *  one stays open while the view redraws under it, holding its own state. */
-  function popover(anchor, fill, wide, kept) {
-    close();
-    const box = el("div", { class: "pop" + (wide ? " wide" : ""), role: "dialog" });
-    if (kept) box.dataset.kept = "1";
-    const r = anchor.getBoundingClientRect();
-    box.style.left = Math.max(4, Math.min(r.left + window.scrollX, document.documentElement.clientWidth - (wide ? 420 : 240))) + "px";
-    box.style.top = r.bottom + window.scrollY + 4 + "px";
-    document.body.append(box);
-    pop = box;
-    fill(box);
-    // The block is as tall as its page: the page grows to hold the menu.
-    const stretch = () => {
-      if (pop === box) document.body.style.minHeight = box.offsetTop + box.offsetHeight + 8 + "px";
-    };
-    new ResizeObserver(stretch).observe(box);
-    const first = box.querySelector("input, select, button");
-    if (first) first.focus();
-    return box;
-  }
-  document.addEventListener("mousedown", (e) => {
-    if (pop && !pop.contains(e.target)) close();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && pop) {
-      close();
-      e.stopPropagation();
-    }
-  });
-  const item = (text, run, cls) => el("button", { type: "button", class: "item" + (cls ? " " + cls : ""), onclick: run }, text);
-  const sep = () => el("div", { class: "sep" });
-  function select(values, current, change, names) {
-    const node = el("select", { onchange: (e) => change(e.target.value) }, values.map((v, i) => el("option", { value: v, selected: v === current }, names ? names[i] : v)));
-    return node;
-  }
+  const pageLink = (row) =>
+    el("button", { type: "button", class: "page-link", onclick: () => post({ type: "open", rel: row.rel }) },
+      (typeof row.props.icon === "string" ? row.props.icon + " " : "") + row.name);
 
   // ------------------------------------------------- filters and sorts
   const OPS = {
@@ -117,217 +79,153 @@
   };
   const OP_NAMES = { "=": "is", "!=": "isNot", has: "contains", "!has": "notContains", empty: "isEmpty", "!empty": "notEmpty", ">": "greater", "<": "less", ">=": "greater", "<=": "less" };
   const opsFor = (key) => OPS[typeOf(key)] || OPS.text;
-  const allKeys = () => ["name"].concat(data.keys);
+  const filterText = (f) =>
+    label(f.key) + " " + s(OP_NAMES[f.op] || "is").toLowerCase() + (f.op === "empty" || f.op === "!empty" ? "" : " " + f.value);
 
-  function filterText(f) {
-    const v = f.op === "empty" || f.op === "!empty" ? "" : " " + (f.value || "…");
-    return label(f.key) + " " + s(OP_NAMES[f.op] || "is").toLowerCase() + v;
+  /** A filter on `key`, by menus: its operator, then its value - one of the
+   *  options where there are some, else asked by the host. */
+  async function filterOn(key, at, replace) {
+    const op = await api.menu(opsFor(key).map((o) => ({ label: s(OP_NAMES[o]), value: o })), at);
+    if (op === null) return;
+    const type = typeOf(key);
+    let value;
+    if (op === "empty" || op === "!empty") value = "";
+    else if (type === "checkbox") {
+      value = await api.menu([{ label: "☑", value: "true" }, { label: "☐", value: "false" }], at);
+      if (value === null) return;
+    } else if ((type === "select" || type === "tags") && (data.options[key] || []).length) {
+      value = await api.menu(data.options[key].map((o) => ({ label: o })), at);
+      if (value === null) return;
+    }
+    post({ type: "addFilter", key, op, value, replace });
   }
 
-  /** A filter's value: the choices of a select, a date, yes or no, or text. */
-  function valueField(f, change) {
-    const type = typeOf(f.key);
-    if (f.op === "empty" || f.op === "!empty") return null;
-    if (type === "checkbox") return select(["true", "false"], f.value || "true", change, ["☑", "☐"]);
-    if ((type === "select" || type === "tags") && (data.options[f.key] || []).length)
-      return select([""].concat(data.options[f.key]), f.value, change, [s("value")].concat(data.options[f.key]));
-    const input = el("input", { type: type === "date" ? "date" : type === "number" ? "number" : "text", value: f.value || "", placeholder: s("value") });
-    input.addEventListener("change", () => change(input.value));
-    input.addEventListener("keydown", (e) => e.key === "Enter" && change(input.value));
-    return input;
+  async function filterMenu(at) {
+    const key = await api.menu(allKeys().map((k) => ({ label: label(k), value: k })), at);
+    if (key !== null) filterOn(key, at);
   }
 
-  /** A filter applies once it says something: a value, or "is empty". */
-  const complete = (f) => f.key && (f.op === "empty" || f.op === "!empty" || String(f.value || "") !== "");
-
-  function filtersMenu(anchor, adding) {
-    const filters = data.spec.filters.map((f) => ({ ...f }));
-    if (adding) filters.push({ key: adding, op: opsFor(adding)[0], value: "" });
-    popover(
-      anchor,
-      (box) => {
-        const save = () => setSpec({ filters: filters.filter(complete) });
-        const draw = () => {
-          box.replaceChildren(
-            ...filters.map((f, i) =>
-              el(
-                "div",
-                { class: "rule" },
-                select(allKeys(), f.key, (k) => {
-                  f.key = k;
-                  f.op = opsFor(k)[0];
-                  f.value = "";
-                  draw();
-                  save();
-                }, allKeys().map(label)),
-                select(opsFor(f.key), f.op, (op) => {
-                  f.op = op;
-                  draw();
-                  save();
-                }, opsFor(f.key).map((op) => s(OP_NAMES[op]))),
-                valueField(f, (v) => {
-                  f.value = v;
-                  save();
-                }),
-                el("button", { type: "button", class: "x", "aria-label": s("remove"), onclick: () => { filters.splice(i, 1); draw(); save(); } }, "×"),
-              ),
-            ),
-            item("+ " + s("addFilter"), () => {
-              const key = data.keys[0] || "name";
-              filters.push({ key, op: opsFor(key)[0], value: "" });
-              draw();
-            }),
-          );
-        };
-        draw();
-      },
-      true,
-      true,
-    );
+  async function sortMenu(at) {
+    const sort = data.spec.sort;
+    const items = allKeys().map((k) => {
+      const now = sort.find((x) => x.key === k);
+      return {
+        label: label(k),
+        items: [
+          { label: s("ascending"), value: k + "\n+", checked: !!now && !now.desc },
+          { label: s("descending"), value: k + "\n-", checked: !!now && now.desc },
+        ],
+      };
+    });
+    if (sort.length) items.push("separator", { label: s("clear"), value: "\nclear" });
+    const choice = await api.menu(items, at);
+    if (choice === null) return;
+    if (choice === "\nclear") return setSpec({ sort: [] });
+    const [key, dir] = String(choice).split("\n");
+    setSpec({ sort: sort.filter((x) => x.key !== key).concat([{ key, desc: dir === "-" }]) });
   }
 
-  function sortsMenu(anchor) {
-    const sorts = data.spec.sort.map((x) => ({ ...x }));
-    popover(
-      anchor,
-      (box) => {
-        const save = () => setSpec({ sort: sorts });
-        const draw = () => {
-          const unused = allKeys().filter((k) => !sorts.some((x) => x.key === k));
-          box.replaceChildren(
-            ...[...sorts.map((x, i) =>
-              el(
-                "div",
-                { class: "rule" },
-                select(allKeys(), x.key, (k) => { x.key = k; save(); }, allKeys().map(label)),
-                select(["asc", "desc"], x.desc ? "desc" : "asc", (d) => { x.desc = d === "desc"; save(); }, [s("ascending"), s("descending")]),
-                el("button", { type: "button", class: "x", "aria-label": s("remove"), onclick: () => { sorts.splice(i, 1); draw(); save(); } }, "×"),
-              ),
-            ),
-            unused.length ? item("+ " + s("addSort"), () => { sorts.push({ key: unused[0], desc: false }); draw(); save(); }) : null,
-            ].filter(Boolean),
-          );
-        };
-        draw();
-      },
-      true,
-      true,
-    );
-  }
-
-  /** The rules in force, under the bar: click one to change it. */
+  /** The rules in force, under the bar: a chip each, its menu to change it. */
   function rules() {
-    const chips = [];
-    for (const f of data.spec.filters) chips.push(el("button", { type: "button", class: "rule-chip", onclick: (e) => filtersMenu(e.currentTarget) }, filterText(f)));
+    const chips = data.spec.filters.map((f, i) =>
+      el("button", {
+        type: "button",
+        class: "tx-chip",
+        onclick: async (e) => {
+          const at = e.currentTarget;
+          const choice = await api.menu([{ label: s("filter") + "…", value: "change" }, { label: s("remove"), value: "remove", danger: true }], at);
+          if (choice === "remove") setSpec({ filters: data.spec.filters.filter((_, j) => j !== i) });
+          if (choice === "change") filterOn(f.key, at, i);
+        },
+      }, filterText(f), icon("chevron")),
+    );
     for (const x of data.spec.sort)
-      chips.push(el("button", { type: "button", class: "rule-chip", onclick: (e) => sortsMenu(e.currentTarget) }, (x.desc ? "↓ " : "↑ ") + label(x.key)));
+      chips.push(el("button", {
+        type: "button",
+        class: "tx-chip",
+        onclick: async (e) => {
+          const choice = await api.menu([
+            { label: s("ascending"), value: "asc", checked: !x.desc },
+            { label: s("descending"), value: "desc", checked: x.desc },
+            "separator",
+            { label: s("remove"), value: "remove", danger: true },
+          ], e.currentTarget);
+          if (choice === null) return;
+          const rest = data.spec.sort.filter((y) => y.key !== x.key);
+          setSpec({ sort: choice === "remove" ? rest : data.spec.sort.map((y) => (y.key === x.key ? { key: y.key, desc: choice === "desc" } : y)) });
+        },
+      }, icon("sort"), label(x.key), icon("chevron")));
     return chips;
   }
 
   // ------------------------------------------------------- table header
-  /** A column's menu: sort, filter, its type, its name, hide or delete. */
-  function columnMenu(th, key) {
-    popover(th, (box) => {
-      box.append(
-        item("↑ " + s("ascending"), () => { close(); setSpec({ sort: [{ key, desc: false }] }); }),
-        item("↓ " + s("descending"), () => { close(); setSpec({ sort: [{ key, desc: true }] }); }),
-        item(s("filter"), () => filtersMenu($("filter"), key)),
+  async function columnMenu(th, key) {
+    const items = [
+      { label: s("ascending"), value: "asc" },
+      { label: s("descending"), value: "desc" },
+      { label: s("filter") + "…", value: "filter" },
+    ];
+    if (key !== "name")
+      items.push(
+        "separator",
+        { label: s("type"), items: TYPES.map((k) => ({ label: s("type." + k), value: "type:" + k, checked: typeOf(key) === k })) },
+        { label: s("rename") + "…", value: "rename" },
+        { label: s("hide"), value: "hide" },
+        "separator",
+        { label: s("deleteProperty"), value: "delete", danger: true },
       );
-      if (key === "name") return;
-      const name = el("input", { type: "text", value: key, "aria-label": s("rename") });
-      name.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          close();
-          post({ type: "renameProp", from: key, to: name.value });
-        }
-      });
-      box.append(sep(), el("div", { class: "field" }, name), el("div", { class: "head" }, s("type")));
-      for (const kind of TYPES)
-        box.append(
-          item(s("type." + kind), () => {
-            close();
-            setSpec({ types: { ...data.spec.types, [key]: kind } });
-          }, typeOf(key) === kind ? "on" : ""),
-        );
-      box.append(
-        sep(),
-        item(s("hide"), () => {
-          close();
-          setSpec({ columns: data.columns.filter((c) => c !== key) });
-        }),
-        item(s("deleteProperty"), () => {
-          close();
-          post({ type: "deleteProp", key });
-        }, "danger"),
-      );
-    });
+    const choice = await api.menu(items, th);
+    if (choice === null) return;
+    if (choice === "asc" || choice === "desc") setSpec({ sort: [{ key, desc: choice === "desc" }] });
+    else if (choice === "filter") filterOn(key, th);
+    else if (choice === "rename") post({ type: "renameProp", from: key });
+    else if (choice === "hide") setSpec({ columns: data.columns.filter((c) => c !== key) });
+    else if (choice === "delete") post({ type: "deleteProp", key });
+    else if (String(choice).startsWith("type:")) setSpec({ types: { ...data.spec.types, [key]: String(choice).slice(5) } });
   }
 
-  /** The last column's +: a new property, or a hidden one back. */
-  function addColumnMenu(th) {
-    popover(th, (box) => {
-      const name = el("input", { type: "text", placeholder: s("propertyName") });
-      let kind = "text";
-      const add = () => {
-        const key = name.value.trim();
-        if (!key) return;
-        close();
-        setSpec({
-          columns: data.columns.includes(key) ? data.columns : data.columns.concat([key]),
-          types: kind === "text" ? data.spec.types : { ...data.spec.types, [key]: kind },
-        });
-      };
-      name.addEventListener("keydown", (e) => e.key === "Enter" && add());
-      box.append(el("div", { class: "field" }, name), el("div", { class: "head" }, s("type")));
-      const kinds = TYPES.map((k) => item(s("type." + k), (e) => {
-        kind = k;
-        kinds.forEach((b) => b.classList.toggle("on", b === e.currentTarget));
-        add();
-      }, k === kind ? "on" : ""));
-      box.append(...kinds);
-      const hidden = data.keys.filter((k) => !data.columns.includes(k));
-      if (hidden.length) {
-        box.append(sep(), el("div", { class: "head" }, s("hide")));
-        for (const k of hidden) box.append(item("+ " + k, () => { close(); setSpec({ columns: data.columns.concat([k]) }); }));
-        box.append(item(s("showAll"), () => { close(); setSpec({ columns: null }); }));
-      }
-    });
+  /** The last column's +: a new property of a kind, or a hidden one back. */
+  async function addColumnMenu(th) {
+    const hidden = data.keys.filter((k) => !data.columns.includes(k));
+    const items = [{ label: s("newProperty"), items: TYPES.map((k) => ({ label: s("type." + k), value: "new:" + k })) }];
+    if (hidden.length)
+      items.push("separator", ...hidden.map((k) => ({ label: k, value: "show:" + k })), { label: s("showAll"), value: "all" });
+    const choice = await api.menu(items, th);
+    if (choice === null) return;
+    if (choice === "all") setSpec({ columns: null });
+    else if (String(choice).startsWith("show:")) setSpec({ columns: data.columns.concat([String(choice).slice(5)]) });
+    else post({ type: "addProp", kind: String(choice).slice(4), columns: data.columns });
   }
 
   // ------------------------------------------------------------- table
   function table() {
     const sorted = (key) => {
       const x = data.spec.sort.find((r) => r.key === key);
-      return x ? (x.desc ? " ↓" : " ↑") : "";
+      return x ? icon(x.desc ? "chevron" : "sort") : null;
     };
-    const th = (key) => el("th", { tabindex: "0", onclick: (e) => columnMenu(e.currentTarget, key) }, el("span", { class: "kind kind-" + typeOf(key) }), label(key) + sorted(key));
-    const head = el(
-      "tr",
-      null,
-      th("name"),
-      data.columns.map(th),
-      el("th", { class: "plus", tabindex: "0", "aria-label": s("newProperty"), onclick: (e) => addColumnMenu(e.currentTarget) }, "+"),
-    );
+    const th = (key) =>
+      el("th", { tabindex: "0", onclick: (e) => columnMenu(e.currentTarget, key) }, icon(TYPE_ICONS[typeOf(key)]), label(key), sorted(key));
+    const head = el("tr", null, th("name"), data.columns.map(th),
+      el("th", { class: "plus", tabindex: "0", "aria-label": s("newProperty"), onclick: (e) => addColumnMenu(e.currentTarget) }, icon("plus")));
     const rows = data.rows.map((row) => el("tr", null, titleCell(row), data.columns.map((key) => cell(row, key)), el("td", { class: "plus" })));
-    const span = data.columns.length + 2;
-    const add = el("tr", { class: "new-row" }, el("td", { colspan: String(span) }, newButton({})));
-    return el("div", { class: "table-wrap" }, el("table", null, el("thead", null, head), el("tbody", null, rows, add)));
+    const add = el("tr", { class: "new-row" }, el("td", { colspan: String(data.columns.length + 2) }, newButton({})));
+    return el("div", { class: "tx-table-frame" }, el("table", { class: "tx-table" }, el("thead", null, head), el("tbody", null, rows, add)));
   }
 
-  /** A page's title: click to rename it, Open beside it to go there. */
+  /** A page's title: click to rename it, the arrow beside it to open it. */
   function titleCell(row) {
-    const icon = typeof row.props.icon === "string" ? row.props.icon + " " : "";
-    const td = el("td", { class: "title" }, el("span", { class: "name" }, icon + row.name), el("button", { type: "button", class: "open", onclick: (e) => { e.stopPropagation(); post({ type: "open", rel: row.rel }); } }, "↗"));
+    const td = el("td", { class: "title" },
+      el("span", { class: "name" }, (typeof row.props.icon === "string" ? row.props.icon + " " : "") + row.name),
+      el("button", { type: "button", class: "tx-icon-button open", "aria-label": s("open"), onclick: (e) => { e.stopPropagation(); post({ type: "open", rel: row.rel }); } }, icon("open")));
     td.addEventListener("click", () => {
-      if (td.querySelector("input")) return;
-      editInline(td, row.name, "text", (text) => post({ type: "renamePage", rel: row.rel, title: text }));
+      if (!td.querySelector("input")) editInline(td, row.name, "text", (text) => post({ type: "renamePage", rel: row.rel, title: text }));
     });
     return td;
   }
 
   /** `td` as a field holding `value`; `commit(text)` on Enter or leaving. */
   function editInline(td, value, kind, commit) {
-    const input = el("input", { type: kind, value: value === undefined || value === null ? "" : String(value) });
+    const input = el("input", { type: kind, class: "cell-input", value: value === undefined || value === null ? "" : String(value) });
     let done = false;
     editing = true;
     const finish = (keep) => {
@@ -353,66 +251,39 @@
     const value = row.props[key];
     const td = el("td", { class: "cell cell-" + type, "data-key": key, tabindex: "0" }, shown(value, type, key));
     const set = (next) => post({ type: "set", rel: row.rel, key, value: next });
-    if (type === "checkbox") {
-      td.addEventListener("click", () => set(value !== true));
-      return td;
-    }
-    if (type === "select" || type === "tags") {
-      td.addEventListener("click", () => optionsMenu(td, key, value, set));
-      return td;
-    }
-    td.addEventListener("click", () => {
-      if (td.querySelector("input")) return;
-      editInline(td, value, type === "date" ? "date" : type === "number" ? "number" : "text", (text) =>
-        set(type === "number" ? (text === "" ? null : Number(text)) : text),
-      );
-    });
+    if (type === "checkbox") td.addEventListener("click", () => set(value !== true));
+    else if (type === "select" || type === "tags") td.addEventListener("click", () => optionsMenu(td, row, key));
+    else
+      td.addEventListener("click", () => {
+        if (!td.querySelector("input"))
+          editInline(td, value, type === "date" ? "date" : type === "number" ? "number" : "text", (text) =>
+            set(type === "number" ? (text === "" ? null : Number(text)) : text));
+      });
     return td;
   }
 
-  /** A select's or multi-select's choices, searched, with one to make. */
-  function optionsMenu(td, key, value, set) {
+  /** A select's or multi-select's options, in Textus's menu: one picked,
+   *  or toggled for a multi-select; a new one asked for by the host. */
+  async function optionsMenu(td, row, key) {
     const multi = typeOf(key) === "tags";
+    const value = row.props[key];
     const chosen = (Array.isArray(value) ? value : value ? [value] : []).map(String);
-    popover(td, (box) => {
-      const find = el("input", { type: "text", placeholder: s("search") });
-      if (multi) box.dataset.kept = "1";
-      const list = el("div", { class: "options" });
-      const pick = (option) => {
-        if (!multi) {
-          close();
-          return set(option === chosen[0] ? null : option);
-        }
-        const next = chosen.includes(option) ? chosen.filter((o) => o !== option) : chosen.concat([option]);
-        chosen.splice(0, chosen.length, ...next);
-        set(next);
-        draw();
-      };
-      const draw = () => {
-        const q = find.value.trim();
-        const all = data.options[key] || [];
-        const matching = all.filter((o) => o.toLowerCase().includes(q.toLowerCase()));
-        list.replaceChildren(
-          ...[...matching.map((o) => el("button", { type: "button", class: "item" + (chosen.includes(o) ? " on" : ""), onclick: () => pick(o) }, tag(o, key))),
-          q && !all.includes(q) ? el("button", { type: "button", class: "item", onclick: () => { (data.options[key] = all.concat([q])); find.value = ""; pick(q); } }, s("create") + " ", tag(q, key)) : null,
-          chosen.length ? el("button", { type: "button", class: "item muted", onclick: () => { close(); set(null); } }, s("clear")) : null,
-        ].filter(Boolean),
-        );
-      };
-      find.addEventListener("input", draw);
-      find.addEventListener("keydown", (e) => {
-        if (e.key !== "Enter") return;
-        const first = list.querySelector("button");
-        if (first) first.click();
-      });
-      box.append(el("div", { class: "field" }, find), list);
-      draw();
-    });
+    const items = (data.options[key] || []).map((o) => ({ label: o, checked: chosen.includes(o) }));
+    if (items.length) items.push("separator");
+    items.push({ label: s("create") + "…", value: "\nnew" });
+    if (chosen.length) items.push({ label: s("clear"), value: "\nclear" });
+    const choice = await api.menu(items, td);
+    if (choice === null) return;
+    const set = (next) => post({ type: "set", rel: row.rel, key, value: next });
+    if (choice === "\nnew") return post({ type: "newOption", rel: row.rel, key, multi, current: chosen });
+    if (choice === "\nclear") return set(null);
+    if (!multi) return set(choice === chosen[0] ? null : choice);
+    set(chosen.includes(choice) ? chosen.filter((o) => o !== choice) : chosen.concat([choice]));
   }
 
-  /** "+ New": a row named where it's made, with `props` already set. */
+  /** "+ New": a page named where it's made, with `props` already set. */
   function newButton(props) {
-    const button = el("button", { type: "button", class: "new" }, "+ " + s("add"));
+    const button = el("button", { type: "button", class: "tx-button small new" }, icon("plus"), s("add"));
     button.addEventListener("click", () => {
       const holder = el("div", { class: "new-title" });
       button.replaceWith(holder);
@@ -425,16 +296,15 @@
   // ---------------------------------------------------------------- board
   function board() {
     const key = data.group;
-    if (!key) return el("div", { class: "empty" }, s("noGroup"));
+    if (!key) return el("div", { class: "tx-empty" }, s("noGroup"));
     const byRel = new Map(data.rows.map((r) => [r.rel, r]));
     const lanes = data.groups.map((g) => {
-      const lane = el(
-        "div",
-        { class: "lane", "data-value": g.value },
-        el("div", { class: "lane-head" }, g.value ? tag(g.value, key) : el("span", { class: "prop" }, s("noValue")), el("span", { class: "prop" }, String(g.rels.length))),
+      const lane = el("div", { class: "lane", "data-value": g.value },
+        el("div", { class: "lane-head" },
+          g.value ? tag(g.value, key, isStatus(key)) : el("span", { class: "tx-tag" }, s("noValue")),
+          el("span", { class: "count" }, String(g.rels.length))),
         g.rels.map((rel) => card(byRel.get(rel), key, g.value)),
-        newButton(groupProps(key, g.value)),
-      );
+        newButton(groupProps(key, g.value)));
       lane.addEventListener("dragover", (e) => {
         e.preventDefault();
         lane.classList.add("drop");
@@ -457,13 +327,10 @@
   }
 
   function card(row, key, lane) {
-    const others = data.columns.filter((c) => c !== key && row.props[c] !== undefined).slice(0, 3);
-    const node = el(
-      "div",
-      { class: "card", draggable: "true" },
+    const others = data.columns.filter((c) => c !== key && row.props[c] !== undefined && row.props[c] !== "").slice(0, 3);
+    const node = el("div", { class: "tx-card record", draggable: "true" },
       pageLink(row),
-      others.map((c) => el("div", { class: "prop" }, shown(row.props[c], data.types[c], c))),
-    );
+      others.map((c) => el("div", { class: "prop" }, shown(row.props[c], data.types[c], c))));
     node.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", JSON.stringify({ rel: row.rel, from: lane })));
     return node;
   }
@@ -474,7 +341,7 @@
 
   function calendar() {
     const key = data.date;
-    if (!key) return el("div", { class: "empty" }, s("noDate"));
+    if (!key) return el("div", { class: "tx-empty" }, s("noDate"));
     if (!month) {
       const first = data.rows.map((r) => parseDay(r.props[key])).find(Boolean);
       const now = new Date();
@@ -486,19 +353,16 @@
       month = new Date(base.getFullYear(), base.getMonth(), 1);
     }
     const lang = s("locale");
-    const title = new Intl.DateTimeFormat(lang, { year: "numeric", month: "long" }).format(month);
     const shift = (n) => {
       month = new Date(month.getFullYear(), month.getMonth() + n, 1);
       render();
     };
-    const nav = el(
-      "div",
-      { class: "nav" },
-      el("strong", null, title),
-      el("button", { type: "button", "aria-label": s("prev"), onclick: () => shift(-1) }, "‹"),
-      el("button", { type: "button", onclick: () => { month = null; render(); } }, s("today")),
-      el("button", { type: "button", "aria-label": s("next"), onclick: () => shift(1) }, "›"),
-    );
+    const nav = el("div", { class: "tx-bar month-bar" },
+      el("strong", null, new Intl.DateTimeFormat(lang, { year: "numeric", month: "long" }).format(month)),
+      el("span", { class: "tx-spacer" }),
+      el("button", { type: "button", class: "tx-icon-button", "aria-label": s("prev"), onclick: () => shift(-1) }, icon("left")),
+      el("button", { type: "button", class: "tx-button small", onclick: () => { month = null; render(); } }, s("today")),
+      el("button", { type: "button", class: "tx-icon-button", "aria-label": s("next"), onclick: () => shift(1) }, icon("right")));
     // Monday first; six weeks always, so the block keeps its height.
     const start = new Date(month);
     start.setDate(1 - ((month.getDay() + 6) % 7));
@@ -526,15 +390,11 @@
       const d = new Date(start);
       d.setDate(start.getDate() + i);
       const k = day(d);
-      const cls = "day" + (d.getMonth() !== month.getMonth() ? " other" : "") + (k === today ? " today" : "");
-      const node = el(
-        "div",
-        { class: cls },
+      const weekend = i % 7 >= 5;
+      const node = el("div", { class: "day" + (d.getMonth() !== month.getMonth() ? " other" : "") + (weekend ? " weekend" : "") + (k === today ? " today" : "") },
         el("span", { class: "num" }, String(d.getDate())),
         (on.get(k) || []).map((x) =>
-          el("button", { type: "button", class: "chip" + (x.first ? "" : " cont"), title: x.row.name, onclick: () => post({ type: "open", rel: x.row.rel }) }, x.row.name),
-        ),
-      );
+          el("button", { type: "button", class: "chip" + (x.first ? "" : " cont"), title: x.row.name, onclick: () => post({ type: "open", rel: x.row.rel }) }, x.row.name)));
       node.addEventListener("dblclick", (e) => {
         if (e.target === node || e.target.classList.contains("num")) post({ type: "add", folder: data.folder, props: { [key]: k } });
       });
@@ -545,64 +405,45 @@
 
   // -------------------------------------------------------------- gallery
   function gallery() {
-    return el(
-      "div",
-      { class: "gallery" },
+    return el("div", { class: "gallery" },
       data.rows.map((row) => {
         const cover = typeof row.props.cover === "string" && /^https?:\/\//.test(row.props.cover) ? row.props.cover : null;
-        const icon = typeof row.props.icon === "string" ? row.props.icon : null;
-        return el(
-          "div",
-          { class: "tile" },
-          (cover || icon) &&
-            el("div", { class: "cover", style: cover ? "background-image:url(" + JSON.stringify(cover) + ")" : null }, cover ? "" : icon),
-          el(
-            "div",
-            { class: "text" },
-            pageLink(row),
-            data.columns.filter((c) => c !== "cover" && row.props[c] !== undefined).slice(0, 3).map((c) => el("div", { class: "prop" }, shown(row.props[c], data.types[c], c))),
-          ),
-        );
-      }),
-    );
+        const glyph = typeof row.props.icon === "string" ? row.props.icon : null;
+        return el("div", { class: "tx-card tile" },
+          (cover || glyph) && el("div", { class: "cover", style: cover ? "background-image:url(" + JSON.stringify(cover) + ")" : null }, cover ? "" : glyph),
+          el("div", { class: "text" }, pageLink(row),
+            data.columns.filter((c) => c !== "cover" && row.props[c] !== undefined).slice(0, 3).map((c) => el("div", { class: "prop" }, shown(row.props[c], data.types[c], c)))));
+      }));
   }
 
   // ---------------------------------------------------------------- frame
   function render() {
     stale = false;
-    if (!pop || !pop.dataset.kept) close();
     const body = $("body");
     if (!data) return;
-    if (data.error) return body.replaceChildren(el("div", { class: "problem" }, data.error));
-    if (data.missing) return body.replaceChildren(el("div", { class: "empty" }, s("missing")));
+    if (data.error) return body.replaceChildren(el("div", { class: "tx-empty problem" }, data.error));
+    if (data.missing) return body.replaceChildren(el("div", { class: "tx-empty" }, s("missing")));
     const view = data.spec.view;
     $("views").replaceChildren(
       ...VIEWS.map((v) =>
-        el("button", { type: "button", role: "tab", "aria-selected": String(v === view), onclick: () => v !== view && post({ type: "view", view: v }) }, s(v)),
-      ),
-    );
-    $("filter").textContent = s("filter");
-    $("filter").classList.toggle("on", data.spec.filters.length > 0);
-    $("sort").textContent = s("sort");
-    $("sort").classList.toggle("on", data.spec.sort.length > 0);
+        el("button", { type: "button", class: "tx-segment", role: "tab", "aria-selected": String(v === view), onclick: () => v !== view && post({ type: "view", view: v }) }, icon(VIEW_ICONS[v]), s(v))));
+    $("filter").setAttribute("aria-label", s("filter"));
+    $("sort").setAttribute("aria-label", s("sort"));
     $("count").textContent = s("count").replace("{0}", String(data.rows.length));
-    $("add").textContent = "+ " + s("add");
+    $("add").replaceChildren(icon("plus"), s("add"));
     $("rules").replaceChildren(...rules());
-    if (!data.rows.length && view !== "calendar" && view !== "table") return body.replaceChildren(el("div", { class: "empty" }, s("empty")));
+    if (!data.rows.length && view !== "calendar" && view !== "table") return body.replaceChildren(el("div", { class: "tx-empty" }, s("empty")));
     body.replaceChildren(view === "board" ? board() : view === "calendar" ? calendar() : view === "gallery" ? gallery() : table());
   }
 
   $("add").addEventListener("click", () => {
     if (!data) return;
-    const button = document.querySelector(".table-wrap .new");
+    const button = document.querySelector(".tx-table .new");
     if (button) button.click();
     else post({ type: "add", folder: data.folder, props: {} });
   });
-  $("filter").addEventListener("click", (e) => {
-    if (!data) return;
-    filtersMenu(e.currentTarget, data.spec.filters.length ? null : data.keys[0] || "name");
-  });
-  $("sort").addEventListener("click", (e) => data && sortsMenu(e.currentTarget));
+  $("filter").addEventListener("click", (e) => data && filterMenu(e.currentTarget));
+  $("sort").addEventListener("click", (e) => data && sortMenu(e.currentTarget));
   api.onMessage((m) => {
     if (!m || m.type !== "data") return;
     if (data && data.spec && m.data.spec && data.spec.view !== m.data.spec.view) month = null;

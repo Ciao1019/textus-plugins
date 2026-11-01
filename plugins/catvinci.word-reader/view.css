@@ -6,6 +6,34 @@ body {
   display: flex;
   flex-direction: column;
 }
+/* A tab view's bar (design-language.md 5.4): Textus's own controls. */
+#bar,
+#find-bar {
+  flex: none;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--ui-border);
+}
+#bar .tx-input[type="number"] {
+  flex: none;
+  width: 56px;
+  min-height: var(--control-height-sm);
+  text-align: right;
+}
+#bar #find,
+#find-bar .tx-input {
+  flex: none;
+  width: 180px;
+  min-height: var(--control-height-sm);
+}
+#count,
+#page,
+#name,
+#info,
+#find-count {
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
+}
 #pages {
   flex: 1;
   min-height: 0;
@@ -25,7 +53,7 @@ body {
   padding: var(--space-5);
 }
 #pages .docx-wrapper > section.docx {
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+  box-shadow: 0 0 0 1px var(--ui-border);
   margin-bottom: var(--space-5);
 }
 #find-input {

@@ -1,4 +1,4 @@
-# Database
+# Database Views
 
 The documents of a folder as a table, a board, a calendar or a gallery - Notion's databases, kept as plain Markdown files. Each document is a row; the properties in its front matter are the columns:
 

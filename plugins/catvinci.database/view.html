@@ -5,13 +5,13 @@
     <link rel="stylesheet" href="textus-resource:view.css" />
   </head>
   <body>
-    <div id="bar">
-      <div id="views" role="tablist"></div>
-      <span class="spacer"></span>
-      <button type="button" id="filter"></button>
-      <button type="button" id="sort"></button>
+    <div class="tx-bar" id="bar">
+      <div class="tx-segmented" id="views" role="tablist"></div>
+      <span class="tx-spacer"></span>
       <span id="count"></span>
-      <button type="button" id="add"></button>
+      <button type="button" class="tx-icon-button" id="filter"><span class="tx-icon" data-icon="filter"></span></button>
+      <button type="button" class="tx-icon-button" id="sort"><span class="tx-icon" data-icon="sort"></span></button>
+      <button type="button" class="tx-button small primary" id="add"></button>
     </div>
     <div id="rules"></div>
     <div id="body"></div>

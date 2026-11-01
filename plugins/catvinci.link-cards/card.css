@@ -27,7 +27,7 @@ body {
 .text {
   flex: 1;
   min-width: 0;
-  padding: 12px 14px;
+  padding: var(--space-3);
 }
 .title {
   font-weight: 600;
@@ -70,12 +70,5 @@ body {
   border: 0;
 }
 .refresh {
-  margin-top: 4px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--ui-muted);
-  font: inherit;
-  font-size: var(--text-caption);
-  cursor: pointer;
+  margin-top: var(--space-1);
 }

@@ -12,7 +12,7 @@ const STRINGS = [
   "filter", "sort", "addFilter", "addSort", "ascending", "descending", "remove",
   "is", "isNot", "contains", "notContains", "isEmpty", "notEmpty", "greater", "less",
   "value", "search", "create", "clear", "untitled", "newProperty", "propertyName",
-  "type", "rename", "hide", "deleteProperty", "showAll",
+  "type", "rename", "hide", "deleteProperty", "showAll", "open",
   "type.text", "type.number", "type.select", "type.tags", "type.date", "type.checkbox", "type.url",
 ];
 
@@ -103,6 +103,7 @@ async function pagesOf(block) {
 
 /** Property `from` called `to` in every page, in the same place. */
 async function renameProp(block, from, to) {
+  if (to === undefined) to = (await textus.ui.input({ prompt: t("rename"), value: from })) || "";
   to = to.trim();
   if (!to || to === from) return;
   const { spec, rows } = await pagesOf(block);
@@ -166,6 +167,28 @@ function render(block, webview, context) {
       if (m.type === "renameProp") return renameProp(block, m.from, m.to);
       if (m.type === "deleteProp") return deleteProp(block, m.key);
       if (m.type === "renamePage") return renamePage(m.rel, m.title);
+      // What a menu can't hold - a name, a value - asked in Textus's own field.
+      if (m.type === "addProp") {
+        const name = ((await textus.ui.input({ prompt: t("propertyName") })) || "").trim();
+        if (!name) return;
+        const spec = database.parseSpec(block.source);
+        const columns = m.columns.includes(name) ? m.columns : m.columns.concat([name]);
+        const types = m.kind === "text" ? spec.types : { ...spec.types, [name]: m.kind };
+        return block.setSource(database.writeSpec({ ...spec, columns, types }));
+      }
+      if (m.type === "addFilter") {
+        const value = m.value !== undefined ? m.value : await textus.ui.input({ prompt: t("value") });
+        if (value === null || value === undefined) return;
+        const spec = database.parseSpec(block.source);
+        spec.filters = spec.filters.filter((f, i) => i !== m.replace);
+        spec.filters.push({ key: m.key, op: m.op, value: String(value).trim() });
+        return block.setSource(database.writeSpec(spec));
+      }
+      if (m.type === "newOption") {
+        const value = ((await textus.ui.input({ prompt: t("create") })) || "").trim();
+        if (!value) return;
+        return setProp(m.rel, m.key, m.multi ? (m.current || []).concat([value]) : value);
+      }
       if (m.type === "move") {
         const fm = await textus.files.frontmatter.get(join(root, m.rel));
         return setProp(m.rel, m.key, database.regroup(fm[m.key], m.from, m.to));

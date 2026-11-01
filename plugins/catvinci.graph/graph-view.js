@@ -40,7 +40,7 @@
         muted: cssVar("--ui-muted", "#646b77"),
         line: cssVar("--ui-border", "#e1e4ea"),
         accent: cssVar("--ui-accent", "#315ed1"),
-        tag: cssVar("--ui-success", "#3f8f6a"),
+        tag: cssVar("--tone-green", "#3f8f6a"),
         node: cssVar("--ui-text", "#505866"),
         font: cssVar("--font-sans", "sans-serif"),
       };

@@ -4,14 +4,14 @@
     <link rel="stylesheet" href="textus-resource:view.css" />
   </head>
   <body>
-    <div class="toolbar">
-      <button class="icon" id="zoom-out">−</button>
-      <button class="icon" id="zoom">100%</button>
-      <button class="icon" id="zoom-in">+</button>
-      <button class="icon" id="rotate">⟳</button>
-      <span class="spacer"></span>
-      <span id="info" class="muted"></span>
-      <button id="source" hidden></button>
+    <div class="tx-bar" id="bar">
+      <button class="tx-icon-button" id="zoom-out"><span class="tx-icon" data-icon="minus"></span></button>
+      <button class="tx-button small" id="zoom">100%</button>
+      <button class="tx-icon-button" id="zoom-in"><span class="tx-icon" data-icon="plus"></span></button>
+      <button class="tx-icon-button" id="rotate"><span class="tx-icon" data-icon="rotate"></span></button>
+      <span class="tx-spacer"></span>
+      <span id="info"></span>
+      <button class="tx-button small" id="source" hidden></button>
     </div>
     <main id="stage" class="fit"><img id="image" alt="" /></main>
     <pre id="code" hidden></pre>

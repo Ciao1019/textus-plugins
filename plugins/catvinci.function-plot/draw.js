@@ -149,7 +149,6 @@ function compile(text) {
   return expression;
 }
 
-var COLORS = ["#2f6fde", "#d9480f", "#2b8a3e", "#ae3ec9", "#e67700"];
 
 function el(name, attrs) {
   var node = document.createElementNS(SVG, name);
@@ -200,7 +199,8 @@ function graph(source, meta, width, height, dark) {
   var sy = function (y) {
     return height - ((y - y0) / (y1 - y0)) * height;
   };
-  var axis = dark ? "#8a8a8a" : "#888888";
+  var c = chartColors(dark);
+  var axis = c.muted;
   var svg = el("svg", {
     xmlns: SVG,
     width: width,
@@ -231,7 +231,7 @@ function graph(source, meta, width, height, dark) {
       el("path", {
         d: d,
         fill: "none",
-        stroke: COLORS[n % COLORS.length],
+        stroke: c.tones[n % c.tones.length],
         "stroke-width": 2,
       }),
     );

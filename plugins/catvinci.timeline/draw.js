@@ -20,9 +20,10 @@ function timeline(source, width, dark) {
     .filter(function (parts) {
       return parts[0];
     });
-  var ink = dark ? "#e6e6e6" : "#222222";
-  var muted = dark ? "#9a9a9a" : "#666666";
-  var accent = dark ? "#7aa7ff" : "#2f6fde";
+  var c = chartColors(dark);
+  var ink = c.ink;
+  var muted = c.muted;
+  var accent = c.tones[0];
   var step = 56;
   var height = Math.max(events.length * step, step);
   var svg = node("svg", {

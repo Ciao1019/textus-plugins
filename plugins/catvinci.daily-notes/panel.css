@@ -1,65 +1,69 @@
-body {
-  background: var(--ui-subtle);
-}
+/* The Calendar tab: a sidebar panel (design-language.md 5.4) - the month
+   and its arrows in a bar, the days under it. Controls are Textus's own. */
 body {
   overflow-x: hidden;
+  background: var(--ui-subtle);
 }
-/* Narrow as the sidebar can be: the month takes what is left between the
-   arrows, and Today keeps its place at the end. */
-.toolbar {
+#bar {
   gap: var(--space-1);
-}
-.toolbar .spacer {
-  display: none;
+  padding: var(--space-2) var(--space-3) 0;
 }
 #month {
   flex: 1;
   min-width: 0;
-  text-align: center;
-  font-size: var(--text-body);
-  white-space: nowrap;
   overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: 600;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 #grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
-  padding: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-3);
 }
 .weekday {
-  text-align: center;
-  font-size: var(--text-caption);
-  color: var(--ui-muted);
   padding-bottom: var(--space-1);
+  color: var(--ui-muted);
+  font-size: var(--text-caption);
+  text-align: center;
 }
 .day {
   position: relative;
   aspect-ratio: 1;
   min-height: 0;
   padding: 0;
-  border: 0;
-  border-radius: var(--shape-s);
+  border: none;
+  border-radius: 50%;
   background: transparent;
   color: var(--ui-text);
+  font: inherit;
   font-size: var(--text-footnote);
+  cursor: pointer;
+}
+.day:hover {
+  background: var(--ui-hover);
 }
 .day.outside {
   color: var(--ui-muted);
-  opacity: 0.55;
 }
 .day.today {
-  color: var(--ui-accent);
+  background: var(--ui-accent-fill, var(--ui-accent));
+  color: var(--ui-on-fill, var(--ui-bg));
   font-weight: 600;
 }
 .day.has-note::after {
   content: "";
   position: absolute;
+  bottom: 12%;
   left: 50%;
-  bottom: 18%;
   width: 4px;
   height: 4px;
   margin-left: -2px;
   border-radius: 50%;
   background: var(--ui-accent);
+}
+.day.today.has-note::after {
+  background: var(--ui-on-fill, var(--ui-bg));
 }

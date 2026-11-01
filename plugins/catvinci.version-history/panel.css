@@ -1,8 +1,19 @@
+/* The History tab: a sidebar panel (design-language.md 5.4) - a title row,
+   then the versions by day; the open one a card with its changes. */
 body {
   background: var(--ui-subtle);
 }
+#bar {
+  padding: var(--space-2) var(--space-3) 0;
+}
+#title {
+  font-size: var(--text-body);
+  font-weight: 600;
+}
 #versions {
+  margin: 0;
   padding: var(--space-2);
+  list-style: none;
 }
 #versions > li {
   display: block;
@@ -15,8 +26,9 @@ body {
   background: var(--ui-hover);
 }
 #versions > li.open {
-  background: var(--ui-bg);
   border: 1px solid var(--ui-border);
+  border-radius: var(--shape-m);
+  background: var(--ui-surface);
   cursor: default;
 }
 .row-head {
@@ -33,10 +45,10 @@ body {
   font-family: var(--font-mono);
 }
 .delta .plus {
-  color: var(--ui-accent);
+  color: var(--tone-green-text);
 }
 .delta .minus {
-  color: var(--ui-danger);
+  color: var(--tone-red-text);
 }
 .diff {
   margin: var(--space-2) 0;
@@ -53,10 +65,10 @@ body {
   padding: 0 var(--space-2);
 }
 .diff .added {
-  background: color-mix(in srgb, var(--ui-accent) 16%, transparent);
+  background: var(--tone-green-tint);
 }
 .diff .removed {
-  background: color-mix(in srgb, var(--ui-danger) 16%, transparent);
+  background: var(--tone-red-tint);
   text-decoration: line-through;
 }
 .diff .gap {
@@ -64,6 +76,7 @@ body {
 }
 .actions {
   display: flex;
+  justify-content: flex-end;
   gap: var(--space-2);
 }
 

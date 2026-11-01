@@ -4,29 +4,13 @@
     <link rel="stylesheet" href="textus-resource:panel.css" />
   </head>
   <body>
-    <div class="toolbar">
+    <div class="tx-bar" id="bar">
       <strong id="title"></strong>
-      <span class="spacer"></span>
-      <button class="icon" id="refresh">
-        <svg
-          width="13"
-          height="13"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M13 8a5 5 0 1 1-1.46-3.54M13 2.5V5h-2.5"
-            stroke="currentColor"
-            stroke-width="1.3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
+      <span class="tx-spacer"></span>
+      <button class="tx-icon-button" id="refresh"><span class="tx-icon" data-icon="refresh"></span></button>
     </div>
-    <ul id="versions" class="list"></ul>
-    <p id="empty" class="empty" hidden></p>
+    <ul id="versions"></ul>
+    <p id="empty" class="tx-empty" hidden></p>
     <script src="textus-resource:diff.js"></script>
     <script src="textus-resource:panel.js"></script>
   </body>

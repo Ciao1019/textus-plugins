@@ -4,7 +4,7 @@
   const t = api.t;
   const $ = (id) => document.getElementById(id);
   $("title").textContent = t("title");
-  $("new").textContent = t("new");
+  $("new").setAttribute("aria-label", t("new"));
   $("empty").textContent = t("empty");
   $("filter").placeholder = t("search");
   $("filter").setAttribute("aria-label", t("search"));
@@ -49,15 +49,22 @@
       minute: "2-digit",
     });
 
-  function button(label, type, id) {
-    const b = document.createElement("button");
-    b.textContent = label;
-    b.onclick = () => {
-      flush();
-      api.postMessage({ type: type, id: id });
-      if (type === "delete") offerUndo();
-    };
-    return b;
+  /** A note's actions, in Textus's own menu: from its more button or a
+   *  right-click on it. */
+  async function actions(id, at) {
+    const type = await api.menu(
+      [
+        { label: t("insert"), value: "insert" },
+        { label: t("open"), value: "open" },
+        "separator",
+        { label: t("delete"), value: "delete", danger: true },
+      ],
+      at,
+    );
+    if (type === null) return;
+    flush();
+    api.postMessage({ type: type, id: id });
+    if (type === "delete") offerUndo();
   }
 
   function render(notes) {
@@ -81,7 +88,12 @@
       let li = list.querySelector('li[data-id="' + note.id + '"]');
       if (!li) {
         li = document.createElement("li");
+        li.className = "tx-card";
         li.dataset.id = note.id;
+        li.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          actions(note.id, { x: e.clientX, y: e.clientY });
+        });
         const area = document.createElement("textarea");
         area.dataset.id = note.id;
         area.placeholder = t("placeholder");
@@ -103,17 +115,21 @@
             }, 300),
           );
         });
-        const actions = document.createElement("div");
-        actions.className = "note-actions";
+        const foot = document.createElement("div");
+        foot.className = "note-foot";
         const stamp = document.createElement("span");
-        stamp.className = "when muted";
-        actions.append(
-          stamp,
-          button(t("insert"), "insert", note.id),
-          button(t("open"), "open", note.id),
-          button(t("delete"), "delete", note.id),
-        );
-        li.append(area, actions);
+        stamp.className = "when";
+        const more = document.createElement("button");
+        more.type = "button";
+        more.className = "tx-icon-button";
+        more.setAttribute("aria-label", t("actions"));
+        const glyph = document.createElement("span");
+        glyph.className = "tx-icon";
+        glyph.dataset.icon = "more";
+        more.append(glyph);
+        more.onclick = (e) => actions(note.id, e.currentTarget);
+        foot.append(stamp, more);
+        li.append(area, foot);
       }
       const area = li.querySelector("textarea");
       if (typing !== note.id) area.value = note.text;
