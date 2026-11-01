@@ -5,12 +5,15 @@
 
 (function (root) {
   const VIEWS = ["table", "board", "calendar", "gallery"];
+  /** A property's kinds, as Notion has them; "tags" is a multi-select. */
+  const TYPES = ["text", "number", "select", "tags", "date", "checkbox", "url"];
   const DATE = /^\d{4}-\d{2}-\d{2}/;
 
   /** A block's lines, `key: value` each: from, view, columns, sort, group,
-   *  date and end (a calendar's), and any number of filter lines. */
+   *  date and end (a calendar's), types (a property's kind, when it isn't
+   *  the one its values suggest) and any number of filter lines. */
   function parseSpec(source) {
-    const spec = { from: null, view: "table", columns: null, sort: [], filters: [], group: null, date: null, end: null };
+    const spec = { from: null, view: "table", columns: null, sort: [], filters: [], group: null, date: null, end: null, types: {} };
     for (const raw of String(source).split("\n")) {
       const line = raw.replace(/\s+#.*$/, "").trim();
       const m = /^([A-Za-z]+)\s*:\s*(.*)$/.exec(line);
@@ -27,8 +30,13 @@
       else if (key === "group") spec.group = value || null;
       else if (key === "date") spec.date = value || null;
       else if (key === "end") spec.end = value || null;
+      else if (key === "types")
+        for (const pair of splitList(value)) {
+          const [k, kind] = pair.split("=").map((x) => x.trim());
+          if (k && TYPES.includes(kind)) spec.types[k] = kind;
+        }
       else if (key === "filter") {
-        const f = /^(\S+)\s*(!=|>=|<=|=|>|<|has|!has)\s*(.*)$/.exec(value);
+        const f = /^(\S+)\s*(!=|>=|<=|=|>|<|!has|has|!empty|empty)\s*(.*)$/.exec(value);
         if (f) spec.filters.push({ key: f[1], op: f[2], value: f[3].trim() });
       }
     }
@@ -42,11 +50,47 @@
     lines.push("view: " + spec.view);
     if (spec.columns) lines.push("columns: " + spec.columns.join(", "));
     if (spec.sort.length) lines.push("sort: " + spec.sort.map((s) => (s.desc ? "-" : "") + s.key).join(", "));
-    for (const f of spec.filters) lines.push("filter: " + f.key + " " + f.op + " " + f.value);
+    for (const f of spec.filters) lines.push(("filter: " + f.key + " " + f.op + " " + (f.value || "")).trimEnd());
     if (spec.group) lines.push("group: " + spec.group);
     if (spec.date) lines.push("date: " + spec.date);
     if (spec.end) lines.push("end: " + spec.end);
+    const types = Object.entries(spec.types || {});
+    if (types.length) lines.push("types: " + types.map(([k, kind]) => k + "=" + kind).join(", "));
     return lines.join("\n");
+  }
+
+  /** `spec` with property `from` called `to` wherever it names it. */
+  function renameKey(spec, from, to) {
+    const name = (k) => (k === from ? to : k);
+    const types = {};
+    for (const [k, kind] of Object.entries(spec.types || {})) types[name(k)] = kind;
+    return {
+      ...spec,
+      columns: spec.columns && spec.columns.map(name),
+      sort: spec.sort.map((s) => ({ ...s, key: name(s.key) })),
+      filters: spec.filters.map((f) => ({ ...f, key: name(f.key) })),
+      group: spec.group && name(spec.group),
+      date: spec.date && name(spec.date),
+      end: spec.end && name(spec.end),
+      types,
+    };
+  }
+
+  /** `spec` without property `key` anywhere. */
+  function dropKey(spec, key) {
+    const types = { ...(spec.types || {}) };
+    delete types[key];
+    const keep = (k) => k !== key;
+    return {
+      ...spec,
+      columns: spec.columns && spec.columns.filter(keep),
+      sort: spec.sort.filter((s) => keep(s.key)),
+      filters: spec.filters.filter((f) => keep(f.key)),
+      group: spec.group === key ? null : spec.group,
+      date: spec.date === key ? null : spec.date,
+      end: spec.end === key ? null : spec.end,
+      types,
+    };
   }
 
   function splitList(value) {
@@ -89,7 +133,7 @@
 
   /** Each property's kind, from the values the rows hold: "date",
    *  "number", "checkbox", "tags" (a list), "url" or "text". */
-  function typesOf(rows) {
+  function typesOf(rows, chosen) {
     const kinds = {};
     for (const row of rows)
       for (const [key, value] of Object.entries(row.props)) {
@@ -97,7 +141,26 @@
         if (!kind) continue;
         kinds[key] = kinds[key] && kinds[key] !== kind ? "text" : kind;
       }
-    return kinds;
+    // Text a few values long, said again and again, is a select: a status.
+    for (const [key, kind] of Object.entries(kinds)) {
+      if (kind !== "text") continue;
+      const said = rows.map((r) => text(r.props[key])).filter(Boolean);
+      const values = new Set(said);
+      if (values.size <= 10 && values.size < said.length && [...values].every((v) => v.length <= 40)) kinds[key] = "select";
+    }
+    return Object.assign(kinds, chosen || {});
+  }
+
+  /** A select's or multi-select's choices: every value its rows have, in
+   *  the order first met. */
+  function options(rows, key) {
+    const seen = [];
+    for (const row of rows) {
+      const value = row.props[key];
+      for (const v of (Array.isArray(value) ? value : [value]).map(text))
+        if (v && !seen.includes(v)) seen.push(v);
+    }
+    return seen;
   }
 
   function kindOf(value) {
@@ -143,6 +206,10 @@
         return items.some((i) => lower(i).includes(lower(want)));
       case "!has":
         return !items.some((i) => lower(i).includes(lower(want)));
+      case "empty":
+        return items.every((i) => i === "");
+      case "!empty":
+        return items.some((i) => i !== "");
       default: {
         const a = text(value);
         const n = Number(a);
@@ -178,6 +245,7 @@
   function groupKey(spec, rows, types) {
     if (spec.group) return spec.group;
     return (
+      Object.keys(types).find((k) => types[k] === "select") ||
       Object.keys(types).find((k) => types[k] === "tags") ||
       Object.keys(types).find((k) => {
         if (types[k] !== "text") return false;
@@ -325,8 +393,12 @@
 
   root.database = {
     VIEWS,
+    TYPES,
     parseSpec,
     writeSpec,
+    renameKey,
+    dropKey,
+    options,
     folderOf,
     rowsOf,
     typesOf,

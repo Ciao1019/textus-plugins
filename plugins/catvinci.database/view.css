@@ -23,8 +23,13 @@ button {
   display: flex;
   gap: 2px;
 }
+.spacer {
+  flex: 1;
+}
 #views button,
 #add,
+#filter,
+#sort,
 .nav button {
   padding: 3px 10px;
   border: 1px solid transparent;
@@ -40,8 +45,34 @@ button {
 }
 #views button:hover,
 #add:hover,
+#filter:hover,
+#sort:hover,
 .nav button:hover {
   color: var(--ui-text);
+}
+#filter.on,
+#sort.on {
+  color: var(--ui-primary);
+}
+/* The filters and sorts in force, each opening its menu. */
+#rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+#rules:not(:empty) {
+  padding-bottom: var(--space-2);
+}
+.rule-chip {
+  padding: 1px 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--shape-pill);
+  background: var(--ui-subtle);
+  color: var(--ui-text);
+  cursor: pointer;
+}
+.rule-chip:hover {
+  border-color: var(--ui-muted);
 }
 #count {
   color: var(--ui-muted);
@@ -78,6 +109,95 @@ td {
 th {
   color: var(--ui-muted);
   font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+th:hover,
+th:focus-visible {
+  background: var(--ui-subtle);
+  outline: none;
+}
+/* A column's kind, as a glyph before its name. */
+.kind::before {
+  display: inline-block;
+  min-width: 1.4em;
+  margin-right: 2px;
+  opacity: 0.7;
+  font-size: 0.9em;
+}
+.kind-text::before { content: "Aa"; }
+.kind-number::before { content: "#"; }
+.kind-select::before { content: "▾"; }
+.kind-tags::before { content: "☰"; }
+.kind-date::before { content: "▦"; }
+.kind-checkbox::before { content: "☑"; }
+.kind-url::before { content: "↗"; }
+th.plus,
+td.plus {
+  width: 32px;
+  min-width: 32px;
+  text-align: center;
+}
+td.plus {
+  cursor: default;
+}
+tr.new-row td {
+  border-left: 0;
+}
+.new {
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: var(--ui-muted);
+  cursor: pointer;
+}
+.new:hover {
+  color: var(--ui-text);
+}
+.new-title input {
+  width: 240px;
+}
+/* A page's title: click to rename, the arrow to open. */
+td.title {
+  position: relative;
+  min-width: 160px;
+  padding-right: 32px;
+  font-weight: 600;
+  cursor: text;
+}
+td.title .open {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--shape-xs);
+  background: var(--ui-bg);
+  color: var(--ui-muted);
+  cursor: pointer;
+  opacity: 0;
+}
+td.title:hover .open,
+td.title .open:focus-visible {
+  opacity: 1;
+}
+.check {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  border: 1.5px solid var(--ui-muted);
+  border-radius: var(--shape-xs);
+  box-sizing: border-box;
+}
+.check.on {
+  border-color: var(--ui-primary);
+  background: var(--ui-primary)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.5l2.5 2.5L11 4.5' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E")
+    center / 12px no-repeat;
+}
+td.cell-checkbox {
+  cursor: pointer;
 }
 td + td,
 th + th {
@@ -103,13 +223,111 @@ td.cell:hover {
 .page-link:hover {
   text-decoration: underline;
 }
+/* An option: a soft swatch of one of nine hues, its text the hue darkened
+   toward the theme's own ink so it reads in light and dark. */
 .tag {
   display: inline-block;
   margin: 0 4px 2px 0;
   padding: 0 6px;
-  border-radius: var(--shape-pill);
-  background: color-mix(in srgb, var(--tag-hue, #3f6fb5) 16%, transparent);
+  border-radius: var(--shape-xs);
+  background: hsl(var(--tag-hue, 210) 60% 50% / 0.16);
+  color: color-mix(in srgb, hsl(var(--tag-hue, 210) 55% 38%) 55%, var(--ui-text));
   line-height: 1.6;
+}
+
+/* Menus: a card over the view. */
+.pop {
+  position: absolute;
+  z-index: 10;
+  min-width: 220px;
+  max-width: calc(100vw - 8px);
+  max-height: 320px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--shape-m);
+  background: var(--ui-bg);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.14);
+}
+.pop.wide {
+  width: 420px;
+}
+.pop .item {
+  display: block;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--shape-xs);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.pop .item:hover,
+.pop .item:focus-visible {
+  background: var(--ui-subtle);
+  outline: none;
+}
+.pop .item.on::after {
+  content: "✓";
+  float: right;
+  color: var(--ui-primary);
+}
+.pop .item.danger {
+  color: var(--ui-danger);
+}
+.pop .item.muted {
+  color: var(--ui-muted);
+}
+.pop .sep {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--ui-border);
+}
+.pop .head {
+  padding: 4px 8px 2px;
+  color: var(--ui-muted);
+  font-size: 0.9em;
+}
+.pop .field {
+  padding: 4px;
+}
+.pop input,
+.pop select {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--shape-xs);
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font: inherit;
+}
+.pop .field input {
+  width: 100%;
+}
+.pop input:focus,
+.pop select:focus {
+  outline: none;
+  border-color: var(--ui-primary);
+}
+.rule {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px;
+}
+.rule > select,
+.rule > input {
+  flex: 1;
+}
+.rule .x {
+  flex: none;
+  width: 24px;
+  border: 0;
+  background: none;
+  color: var(--ui-muted);
+  cursor: pointer;
 }
 .cell input:not([type="checkbox"]) {
   width: 100%;

@@ -23,13 +23,15 @@ sort: start
 ```
 ````
 
-- **Table**: click a cell to change it; the document's front matter changes with it. Dates get a date picker, lists are written `a, b`, a `rate` from 0 to 5 shows as stars.
-- **Board**: cards in lists, one per value of a list property (or `group: status`); drag a card to another list to change it.
+- **Table**: click a cell to change it; the document's front matter changes with it. Click a page's name to rename it (its file and the links to it follow); ↗ beside it opens it. **+ New** under the table makes a page from the title you type.
+- **Property types**, as in Notion: text, number, select, multi-select, date, checkbox and URL. A select or multi-select opens its options to search or add to, each in its own colour. A column of a few short words said again and again (a status) is a select by itself.
+- **A column's menu**: click its name to sort by it, filter by it, change its type, rename it (in every page), hide it or delete it. The **+** at the end adds a property, or shows a hidden one again.
+- **Filter** and **Sort** above the view open their rules - as many as you like; the rules in force show under them, a click away.
+- **Board**: lists by a select property (as Notion's by status), else a multi-select, or `group: owner`; drag a card to another list to change it, or add one at the foot of a list.
 - **Calendar**: each page on its date (`date: start`), across to its `end` if it has one. Double-click a day for a new page on it.
 - **Gallery**: a card per page, with its `cover` picture or `icon`.
-- **New** makes a page in the folder.
 
-More lines for the block: `columns: start, focus` (which, in what order), `sort: -rate` (`-` for descending), `filter: focus has Research` (`=`, `!=`, `has`, `>`, `<`, one per line), `group:`, `date:`, `end:`.
+All of it is kept in the block, in lines you can read and change: `columns: start, focus` (which, in what order), `sort: -rate` (`-` for descending), `filter: focus has Research` (`=`, `!=`, `has`, `!has`, `>`, `<`, `empty`, `!empty`, one per line), `group:`, `date:`, `end:`, `types: status=select` (a property's kind).
 
 **From Notion**: export the database as Markdown & CSV, unzip it into the open folder, right-click its `.csv` in the sidebar and choose **Import from Notion…**. Its pages come in as documents with their properties as front matter, with a page showing them.
 

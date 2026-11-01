@@ -70,6 +70,38 @@ describe("database", () => {
     expect(db.regroup("Todo", "Todo", "Done")).toBe("Done");
   });
 
+  it("keeps a property's chosen kind in the block, and reads repeated short text as a select", () => {
+    const spec = db.parseSpec("view: table\ntypes: status=select, tags=tags, bad=nope");
+    expect(spec.types).toEqual({ status: "select", tags: "tags" });
+    expect(db.writeSpec(spec)).toContain("types: status=select, tags=tags");
+    const rows = [
+      { rel: "a.md", name: "a", props: { status: "Doing", note: "one" } },
+      { rel: "b.md", name: "b", props: { status: "Done", note: "two" } },
+      { rel: "c.md", name: "c", props: { status: "Doing", note: "three" } },
+    ];
+    expect(db.typesOf(rows)).toEqual({ status: "select", note: "text" });
+    expect(db.typesOf(rows, { note: "select" }).note).toBe("select");
+    expect(db.options(rows, "status")).toEqual(["Doing", "Done"]);
+  });
+
+  it("filters on a property being empty, and writes such a filter back without a value", () => {
+    const rows = db.rowsOf(WEEKS, "Life/2026 Calendar");
+    const names = (source: string) => db.viewRows(rows, db.parseSpec(source)).map((r: Row) => r.name);
+    expect(names("filter: rate empty")).toEqual(["Week1", "Week11"]);
+    expect(names("filter: rate !empty")).toEqual(["Week2"]);
+    expect(db.writeSpec(db.parseSpec("filter: rate !empty"))).toContain("filter: rate !empty");
+    expect(db.writeSpec(db.parseSpec("filter: rate !empty"))).not.toMatch(/!empty $/m);
+  });
+
+  it("follows a property renamed or deleted through every line of the block", () => {
+    const spec = db.parseSpec("columns: focus, rate\nsort: -focus\nfilter: focus has Work\ngroup: focus\ntypes: focus=tags");
+    const renamed = db.renameKey(spec, "focus", "area");
+    expect(db.writeSpec(renamed)).toBe(
+      "view: table\ncolumns: area, rate\nsort: -area\nfilter: area has Work\ngroup: area\ntypes: area=tags",
+    );
+    expect(db.writeSpec(db.dropKey(spec, "focus"))).toBe("view: table\ncolumns: rate");
+  });
+
   it("turns a Notion export's CSV into documents with front matter", () => {
     const csv =
       "﻿Week name,Start Day,End Day,Focus Field,Rate\n" +

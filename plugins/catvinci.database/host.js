@@ -9,6 +9,11 @@ const t = (key, ...args) => textus.l10n.t(key, ...args);
 const STRINGS = [
   "table", "board", "calendar", "gallery", "page", "add", "count", "empty",
   "noValue", "noGroup", "noDate", "today", "prev", "next", "missing", "locale",
+  "filter", "sort", "addFilter", "addSort", "ascending", "descending", "remove",
+  "is", "isNot", "contains", "notContains", "isEmpty", "notEmpty", "greater", "less",
+  "value", "search", "create", "clear", "untitled", "newProperty", "propertyName",
+  "type", "rename", "hide", "deleteProperty", "showAll",
+  "type.text", "type.number", "type.select", "type.tags", "type.date", "type.checkbox", "type.url",
 ];
 
 let root = null;
@@ -43,15 +48,20 @@ async function snapshot(block) {
     name: r.name,
     props: Object.fromEntries(Object.entries(r.props).map(([k, v]) => [k, plain(v)])),
   }));
-  const types = database.typesOf(rows);
+  const types = database.typesOf(rows, spec.types);
   const shown = database.viewRows(rows, spec);
+  const keys = [...new Set([...Object.keys(types), ...(spec.columns || [])])].filter((k) => k !== "icon" && k !== "cover");
+  const options = {};
+  for (const k of keys) if (types[k] === "select" || types[k] === "tags") options[k] = database.options(rows, k);
   const group = database.groupKey(spec, rows, types);
   return {
     spec,
     folder,
     rows: shown,
     columns: database.columnsOf(spec, rows),
+    keys,
     types,
+    options,
     group,
     groups: database.groups(shown, group).map((g) => ({ value: g.value, rels: g.rows.map((r) => r.rel) })),
     date: database.dateKey(spec, types),
@@ -64,9 +74,10 @@ function strings() {
   return Object.fromEntries(STRINGS.map((k) => [k, t(k)]));
 }
 
-/** A new document in the view's folder, its front matter `props`. */
-async function addRow(folder, props) {
-  const title = await textus.ui.input({ prompt: t("newTitle") });
+/** A new document in the view's folder, its front matter `props`; its
+ *  title typed in the view, or asked for. */
+async function addRow(folder, props, typed) {
+  const title = typed || (await textus.ui.input({ prompt: t("newTitle") }));
   if (!title || !title.trim()) return;
   const file = join(root, (folder ? folder + "/" : "") + fileName(title) + ".md");
   if (await textus.files.stat(file)) return textus.ui.message(t("exists", title.trim()));
@@ -81,6 +92,50 @@ async function setProp(rel, key, value) {
     if (value === null || value === "" || (Array.isArray(value) && !value.length)) delete fm[key];
     else fm[key] = value;
   });
+}
+
+/** The documents of the block's folder, every one, filters aside. */
+async function pagesOf(block) {
+  const spec = database.parseSpec(block.source);
+  const folder = database.folderOf(spec.from, relOf(block.path));
+  return { spec, rows: database.rowsOf(await textus.metadata.all(), folder) };
+}
+
+/** Property `from` called `to` in every page, in the same place. */
+async function renameProp(block, from, to) {
+  to = to.trim();
+  if (!to || to === from) return;
+  const { spec, rows } = await pagesOf(block);
+  for (const row of rows)
+    if (from in row.props)
+      await textus.files.frontmatter.update(join(root, row.rel), (fm) =>
+        Object.fromEntries(Object.entries(fm).map(([k, v]) => [k === from ? to : k, v])),
+      );
+  await block.setSource(database.writeSpec(database.renameKey(spec, from, to)));
+}
+
+async function deleteProp(block, key) {
+  const { spec, rows } = await pagesOf(block);
+  const using = rows.filter((r) => key in r.props);
+  if (using.length && !(await textus.ui.confirm(t("deleteAsk", key, using.length), { okLabel: t("deleteProperty"), danger: true }))) return;
+  for (const row of using)
+    await textus.files.frontmatter.update(join(root, row.rel), (fm) => {
+      delete fm[key];
+      return fm;
+    });
+  await block.setSource(database.writeSpec(database.dropKey(spec, key)));
+}
+
+/** A page renamed in the view: its file, the links to it, and its title. */
+async function renamePage(rel, title) {
+  title = title.trim();
+  const dir = rel.includes("/") ? rel.slice(0, rel.lastIndexOf("/") + 1) : "";
+  const old = rel.slice(dir.length).replace(/\.md$/i, "");
+  if (!title || title === old) return;
+  const to = join(root, dir + fileName(title) + ".md");
+  if (await textus.files.stat(to)) return textus.ui.message(t("exists", title));
+  await textus.files.rename(join(root, rel), to, { updateLinks: true });
+  await textus.files.process(to, (text) => text.replace(/^(---\n[\s\S]*?\n---\n+)?# .*$/m, (line, fm) => (fm || "") + "# " + title));
 }
 
 function render(block, webview, context) {
@@ -100,12 +155,17 @@ function render(block, webview, context) {
       if (m.type === "ready") return send();
       if (m.type === "open") return textus.layout.open(join(root, m.rel));
       if (m.type === "set") return setProp(m.rel, m.key, m.value);
-      if (m.type === "add") return addRow(m.folder, m.props);
+      if (m.type === "add") return addRow(m.folder, m.props, m.title);
       if (m.type === "view") {
         const spec = database.parseSpec(block.source);
         spec.view = m.view;
         return block.setSource(database.writeSpec(spec));
       }
+      // Filters, sorts, columns and types, as the view's menus set them.
+      if (m.type === "spec") return block.setSource(database.writeSpec({ ...database.parseSpec(block.source), ...m.spec }));
+      if (m.type === "renameProp") return renameProp(block, m.from, m.to);
+      if (m.type === "deleteProp") return deleteProp(block, m.key);
+      if (m.type === "renamePage") return renamePage(m.rel, m.title);
       if (m.type === "move") {
         const fm = await textus.files.frontmatter.get(join(root, m.rel));
         return setProp(m.rel, m.key, database.regroup(fm[m.key], m.from, m.to));
