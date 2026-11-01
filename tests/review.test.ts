@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { report, review, verdict } from "../scripts/review-lib.mjs";
+import { changes, report, review, verdict } from "../scripts/review-lib.mjs";
 
 const MIT = "MIT License\n\nCopyright (c) 2026 jane\n";
 
@@ -103,5 +103,52 @@ describe("review", () => {
     expect(details.join(" ")).toMatch(/no README\.md in the package/);
     expect(details.join(" ")).toMatch(/doesn't recognise/);
     expect(details.join(" ")).toMatch(/CatVinci or Official/);
+  });
+});
+
+describe("changes", () => {
+  // The listed version asks for files.write and network:* and decodes
+  // strings: all approved when it was listed.
+  const listedOver = { version: "0.1.0", permissions: ["files.read", "files.write", "network:*"] };
+  const listedFiles = { "host.js": "exports.activate = () => atob(x);" };
+  const listed = () => {
+    const results = review(plugin(listedOver, listedFiles));
+    return { permissions: listedOver.permissions, results };
+  };
+  const next = (over: Record<string, unknown> = {}, files: Record<string, string> = {}) => {
+    const manifest = { ...listedOver, version: "0.2.0", ...over };
+    const results = review({
+      ...plugin(manifest, { ...listedFiles, ...files }),
+      previous: listedOver,
+    });
+    return { permissions: manifest.permissions as string[], results };
+  };
+
+  it("lets through a version that only repeats what was approved", () => {
+    const found = changes(listed(), next());
+    expect(found).toMatchObject({ failed: false, newPermissions: [], newWarnings: [] });
+    expect(found.automatic).toBe(true);
+    expect(changes(listed(), next({ permissions: ["network:*"] })).automatic).toBe(true);
+  });
+
+  it("holds a version that asks for a new permission, even one not broad", () => {
+    const found = changes(
+      listed(),
+      next({ permissions: ["files.read", "files.write", "network:*", "editor.read"] }),
+    );
+    expect(found.newPermissions).toEqual(["editor.read"]);
+    expect(found.automatic).toBe(false);
+  });
+
+  it("holds a version with a warning the listed one didn't have", () => {
+    const found = changes(listed(), next({}, { "panel.js": "document.cookie" }));
+    expect(found.newWarnings.map((r) => r.detail)).toEqual(["document.cookie in panel.js."]);
+    expect(found.automatic).toBe(false);
+  });
+
+  it("holds a version that fails a check", () => {
+    const found = changes(listed(), next({}, { "tool.dll": "MZ" }));
+    expect(found.failed).toBe(true);
+    expect(found.automatic).toBe(false);
   });
 });

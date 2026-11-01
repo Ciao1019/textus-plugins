@@ -5,7 +5,18 @@
 
 const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*\.[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const REPO = /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/;
-const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+const VERSION = /^(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?$/;
+
+/** Negative, zero or positive as `a` is older than, the same as or newer
+ *  than `b`, by x.y.z; NaN when either isn't a version. */
+export function compareVersions(a, b) {
+  const x = VERSION.exec(a);
+  const y = VERSION.exec(b);
+  if (!x || !y) return NaN;
+  for (let i = 1; i <= 3; i++)
+    if (Number(x[i]) !== Number(y[i])) return Number(x[i]) - Number(y[i]);
+  return 0;
+}
 
 /** The file's entry, checked: its id (also its file name), repository
  *  and version, the libraries it bundles (path -> where from), and the
@@ -31,4 +42,19 @@ export function communityEntry(json, path = "") {
 /** Where the version's zip is. */
 export function releaseZipUrl({ id, repo, version }) {
   return `https://github.com/${repo}/releases/download/v${version}/${id}-${version}.zip`;
+}
+
+/** The newest version among the repository's GitHub releases (the API's
+ *  objects) that is newer than the listed one and has its zip, or null.
+ *  Only plain x.y.z tags: prereleases and drafts are for testers. */
+export function newerRelease({ id, version }, releases) {
+  let newest = null;
+  for (const release of releases) {
+    const tag = /^v(\d+\.\d+\.\d+)$/.exec(release.tag_name ?? "");
+    if (!tag || release.draft || release.prerelease) continue;
+    const found = tag[1];
+    if (!(release.assets ?? []).some((a) => a.name === `${id}-${found}.zip`)) continue;
+    if (compareVersions(found, newest ?? version) > 0) newest = found;
+  }
+  return newest;
 }

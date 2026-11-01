@@ -1,0 +1,92 @@
+name: updates
+
+# New versions of community plugins, without their authors opening a pull
+# request: once a day, each listing on main whose repository released a
+# newer v<x.y.z> with its zip gets that version reviewed and a pull
+# request (one per plugin, branch auto/<id>) changing its version and
+# pinning the reviewed zip's sha256. One that fails nothing, asks for no
+# new permission and warns of nothing the listed version didn't is merged
+# here (scripts/updates.mjs); any other waits, labelled needs-review.
+# First listings stay pull requests a maintainer merges.
+#
+# Pushes and pull requests made with this token start no workflows: the
+# review runs here rather than in review.yml, and a merge starts the
+# release itself.
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: updates
+  cancel-in-progress: false
+
+jobs:
+  updates:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # main's scripts review; the plugins' code is only read.
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Find and review new versions
+        id: find
+        run: node scripts/updates.mjs updates
+        continue-on-error: true
+      - name: Open, update or merge their pull requests
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh label create needs-review --color d93f0b --description "Waits for a maintainer" --force
+          mkdir -p updates && touch updates/updates.tsv
+          merged=false
+          while IFS=$'\t' read -r id version decision; do
+            branch="auto/$id"
+            file="community/$id.json"
+            title="$id $version"
+            # A version a maintainer closed isn't proposed again.
+            if [ -n "$(gh pr list --head "$branch" --state closed --json title --jq ".[] | select(.title == \"$title\") | .title")" ]; then
+              echo "$title was closed; skipped"
+              continue
+            fi
+            git checkout -f -B "$branch" origin/main
+            cp "updates/$id.json" "$file"
+            # Pushed only when the file changed, so a waiting pull request
+            # isn't rewritten every day.
+            if ! git diff --quiet "origin/$branch" -- "$file" 2>/dev/null; then
+              git commit -m "Community: $title" -- "$file"
+              git push --force origin "$branch"
+            fi
+            pr=$(gh pr list --head "$branch" --state open --json url --jq '.[0].url')
+            if [ -z "$pr" ]; then
+              pr=$(gh pr create --base main --head "$branch" --title "$title" --body-file "updates/$id.md")
+            else
+              gh pr edit "$pr" --title "$title" --body-file "updates/$id.md"
+            fi
+            if [ "$decision" = automatic ]; then
+              gh pr merge "$pr" --squash --delete-branch
+              merged=true
+            else
+              gh pr edit "$pr" --add-label needs-review
+            fi
+          done < updates/updates.tsv
+          if [ "$merged" = true ]; then
+            gh workflow run release.yml --ref main
+          fi
+      - name: Fail when a listing couldn't be checked
+        if: steps.find.outcome == 'failure'
+        run: exit 1

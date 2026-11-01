@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { communityEntry, releaseZipUrl } from "../scripts/community.mjs";
+import { communityEntry, newerRelease, releaseZipUrl } from "../scripts/community.mjs";
 
 const good = { id: "jane.word-count", repo: "jane/textus-word-count", version: "0.2.0" };
 
@@ -22,5 +22,33 @@ describe("communityEntry", () => {
       [{ ...good, libs: ["x"] }, ""],
     ];
     for (const [json, path] of bad) expect(() => communityEntry(json, path)).toThrow();
+  });
+});
+
+describe("newerRelease", () => {
+  const release = (tag: string, over: Record<string, unknown> = {}) => ({
+    tag_name: tag,
+    draft: false,
+    prerelease: false,
+    assets: [{ name: `jane.word-count-${tag.slice(1)}.zip` }],
+    ...over,
+  });
+
+  it("finds the newest released version with its zip", () => {
+    const releases = [release("v0.1.0"), release("v0.10.0"), release("v0.3.0"), release("v0.2.0")];
+    expect(newerRelease(good, releases)).toBe("0.10.0");
+  });
+
+  it("finds nothing when only the listed version, older ones or unfinished releases exist", () => {
+    expect(newerRelease(good, [release("v0.2.0"), release("v0.1.9")])).toBeNull();
+    expect(
+      newerRelease(good, [
+        release("v0.3.0", { draft: true }),
+        release("v0.4.0", { prerelease: true }),
+        release("v0.5.0", { assets: [{ name: "other-0.5.0.zip" }] }),
+        release("v0.6.0-beta.1"),
+        release("0.7.0"),
+      ]),
+    ).toBeNull();
   });
 });

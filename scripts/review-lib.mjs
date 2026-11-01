@@ -10,6 +10,7 @@
 // reviewer where to look.
 
 import { createHash } from "node:crypto";
+import { compareVersions } from "./community.mjs";
 
 export const MAX_PACKAGE_BYTES = 5 * 1024 * 1024;
 
@@ -52,15 +53,6 @@ const LONG_LINE = 1000;
 
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const text = (bytes) => Buffer.from(bytes).toString("utf8");
-
-function compareVersions(a, b) {
-  const x = VERSION.exec(a);
-  const y = VERSION.exec(b);
-  if (!x || !y) return NaN;
-  for (let i = 1; i <= 3; i++)
-    if (Number(x[i]) !== Number(y[i])) return Number(x[i]) - Number(y[i]);
-  return 0;
-}
 
 /**
  * Reviews one version. `entry` is its community/<id>.json; `pkg` and
@@ -187,6 +179,31 @@ export function verdict(results) {
   if (results.some((r) => r.level === "fail")) return "fail";
   if (results.some((r) => r.level === "warn")) return "warn";
   return "pass";
+}
+
+/**
+ * What a new version brings that the listed one didn't, from both
+ * versions' manifest permissions and review results. Only a version that
+ * fails nothing, asks for no new permission and warns of nothing new is
+ * `automatic`: a broad permission or a warning already listed was
+ * approved when it was.
+ */
+export function changes(listed, next) {
+  const had = new Set(listed.permissions);
+  const newPermissions = next.permissions.filter((p) => !had.has(p));
+  // Permissions are compared as a set; their warnings' wording names versions.
+  const key = (r) => `${r.check}: ${r.detail}`;
+  const warned = new Set(listed.results.filter((r) => r.level === "warn").map(key));
+  const newWarnings = next.results.filter(
+    (r) => r.level === "warn" && r.check !== "permissions" && !warned.has(key(r)),
+  );
+  const failed = verdict(next.results) === "fail";
+  return {
+    failed,
+    newPermissions,
+    newWarnings,
+    automatic: !failed && !newPermissions.length && !newWarnings.length,
+  };
 }
 
 /** The results as the comment on the pull request. */

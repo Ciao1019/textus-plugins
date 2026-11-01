@@ -46,12 +46,14 @@ Themes are shared in [textus-themes](https://github.com/CatVinci-Studio/textus-t
 4. The review runs on the pull request and posts what it found:
    - **the package** - its manifest, id and version, size, no programs or native libraries;
    - **its source** - every file in the zip is the tagged repository's, byte for byte;
-   - **permissions** - each one listed; new ones since the last version, and broad ones (`network:*`, `files.write`, `editor.write`, `background`), wait for a person;
+   - **permissions** - each one listed; broad ones (`network:*`, `files.write`, `editor.write`, `background`) wait for a person, who approves them once: at the first listing, or in the version that adds them;
    - **the code** - no `eval`, no code loaded from the web, no keys written in, nothing minified that isn't a named library;
    - **what comes with it** - a `README.md` in the package, an open-source LICENSE, English and Chinese strings, no name that borrows "CatVinci" or "Official". The README is what **Get more** shows on your plugin's page, and its guide once installed: what it does and how to reach it. Add `README.zh.md`, `README.ja.md` and so on for other languages; Textus shows the one in the reader's language, English otherwise.
 5. A maintainer tries it in Textus, adds the reviewed zip's `sha256` to the file and merges. The release workflow copies that zip here and **Get more** lists it.
 
-Each new version is a pull request changing `version` in the same file, reviewed the same way. Passing the review doesn't make a plugin safe on its own: Textus runs every plugin in a sandbox and asks before each permission. A plugin taken down goes in [`removed.json`](removed.json).
+After that, a new version needs no pull request from you: push its version tag (`v0.2.0`) and let your release workflow publish the zip. Once a day this repository looks for a release newer than the listed version, reviews it the same way and opens a pull request that changes `version` and pins its `sha256`. One that fails nothing, asks for no permission the listed version didn't and brings no warning it didn't have is merged on its own and listed within the day; one that adds a permission or a new warning, or fails a check, waits for a maintainer. Prereleases and drafts are left out.
+
+Passing the review doesn't make a plugin safe on its own: Textus runs every plugin in a sandbox and asks before each permission. A plugin taken down goes in [`removed.json`](removed.json).
 
 ### A skill
 
@@ -111,11 +113,13 @@ Textus 的 **设置 › 扩展 › 获取更多** 里有三类东西：插件和
 4. PR 上会自动审查并贴出结果：
    - **包**：清单、id 和版本、大小，不能有可执行文件和原生库；
    - **源码一致**：zip 里每个文件都和仓库那个标签的文件逐字节相同；
-   - **权限**：列出全部权限；比上一版多出的、范围大的（`network:*`、`files.write`、`editor.write`、`background`）要等人看；
+   - **权限**：列出全部权限；范围大的（`network:*`、`files.write`、`editor.write`、`background`）要等人看，且只批一次：首次上架时，或在新增它的那个版本；
    - **代码**：不能用 `eval`、不能从网上加载代码、不能写死密钥，压缩过的代码只能是写明来源的库；
    - **附带内容**：包里的 `README.md`、开源许可证、中英文文字，名字不能借用「CatVinci」或「Official」。README 就是「获取更多」里插件页显示的介绍，也是安装后的使用说明：写清它做什么、从哪里用。其他语言可以加 `README.zh.md`、`README.ja.md` 等，Textus 按读者的语言显示，没有就显示英文。
 5. 维护者在 Textus 里试用，把审查过的 zip 的 `sha256` 填进文件后合并。发布流程把这个 zip 复制到本仓库，**获取更多** 里就能看到。
 
-之后每个新版本都是改同一个文件里 `version` 的 PR，同样审查。审查通过不等于绝对安全：Textus 让每个插件在沙箱里运行，每个权限都要用户同意。被下架的插件写进 [`removed.json`](removed.json)。
+之后发新版本不用你再提 PR：推送版本标签（`v0.2.0`），让发布流程发布 zip 即可。本仓库每天查找比已上架版本更新的 release，同样审查，然后开一个改 `version` 并固定 `sha256` 的 PR。没有检查失败、没有比已上架版本多出的权限、也没有它原来没有的警告的，会自动合并，当天上架；新增权限或新警告、或有检查失败的，等维护者处理。预发布和草稿不算。
+
+审查通过不等于绝对安全：Textus 让每个插件在沙箱里运行，每个权限都要用户同意。被下架的插件写进 [`removed.json`](removed.json)。
 
 **技能**：在本仓库提 PR 加上技能文件；CI 检查（`npm run check`），维护者一般一周内在 Textus 里试用后合并，之后所有人都能在 **获取更多** 里看到。只有 CatVinci Studio 做的会标「官方」。
