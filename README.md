@@ -2,8 +2,6 @@
 
 The plugins for [Textus](https://textus.catvinci.com), the Markdown editor. None of them comes with Textus: you install the ones you want from **Settings › Plugins › Get plugins**, and Textus downloads them from this repository.
 
-[中文说明](#中文说明)
-
 ## The plugins
 
 | Plugin | What it does |
@@ -54,12 +52,3 @@ The Textus app's tests and its development server use a checkout of this reposit
 
 MIT - see [LICENSE](LICENSE). The libraries copied into the packages keep their own licenses: PDF.js (Apache-2.0), JSZip (MIT) and docx-preview (Apache-2.0).
 
----
-
-## 中文说明
-
-[Textus](https://textus.catvinci.com) 的插件。Textus 不内置任何插件：在**设置 › 插件 › 获取插件**里选择想要的，Textus 才从这个仓库下载安装。
-
-每个插件运行前都会先请求它需要的权限，之后可以在设置 › 插件里它自己的页面里收回。
-
-写插件可以从 [`template/`](template/) 这个能直接运行的小插件开始，说明见 Textus 仓库里的 [Writing plugins](https://github.com/CatVinci-Studio/Textus/blob/main/docs/dev/writing-plugins.md)，这里的插件都是完整的例子。自己的插件用**设置 › 扩展 › 插件 › 载入插件文件夹…**试用；要发布，在它的页面点**导出以发布…**，会得到一个带自动发布流程的独立仓库。别人的插件通过 [`community/`](community/) 上架：一个写明仓库和版本的文件，PR 上自动审查。详见 [上架说明](LISTING.md#中文说明)。
