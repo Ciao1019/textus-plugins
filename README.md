@@ -7,6 +7,7 @@ The plugins for [Textus](https://textus.catvinci.com), the Markdown editor. None
 | Plugin | What it does |
 | --- | --- |
 | Backlinks | For the document in front: the notes that link to it, the ones that name it without a link - linked in one click - and the notes it links to. |
+| Cloud Sync | End-to-end encrypted workspace sync through S3-compatible storage, WebDAV or Nutstore, preserving both versions of concurrent edits. |
 | Calendar & Daily Notes | A calendar in the sidebar and a note for each day, kept in a folder of the open folder. |
 | Emacs | Emacs keys in the editor: moving by character, word and line, the mark and region, the kill ring with C-y and M-y, C-/ undo and C-x prefixes. |
 | Graph View | Your notes and the links between them as a graph - for the whole folder, or around the document in front - with filters, colour groups and forces to shape it. |
@@ -45,6 +46,10 @@ npm ci
 npm run check   # reads every manifest, runs the tests
 npm run build   # dist/: the zips and index.json
 ```
+
+Cloud Sync keeps its typed development source and protocol tests in
+[`development/cloud-sync/`](development/cloud-sync/README.md). Its readable runtime
+is checked in under `plugins/catvinci.cloud-sync/`; packaging never compiles it.
 
 The Textus app's tests and its development server use a checkout of this repository placed beside the app (`textus-plugins/`), or the one `TEXTUS_PLUGINS_DIR` names.
 

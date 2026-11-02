@@ -1,0 +1,15 @@
+{
+  "id": "catvinci.cloud-sync",
+  "version": "0.3.0",
+  "official": true,
+  "platforms": [
+    "desktop"
+  ],
+  "zipEntries": 10,
+  "sourceMatch": true,
+  "sha256": "58105ad264488f5146e2de64d0c31d542aad4cade65d46427c6f18b4479a1dac",
+  "size": 37413,
+  "screenshots": [
+    "https://github.com/CatVinci-Studio/textus-plugins/releases/download/catalog/shot-catvinci.cloud-sync-1.png"
+  ]
+}

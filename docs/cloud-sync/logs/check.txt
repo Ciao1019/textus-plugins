@@ -1,0 +1,18 @@
+
+> textus-plugins@0.0.0 check
+> npm run typecheck:cloud-sync && node scripts/cloud-sync.mjs --check && node scripts/build.mjs --check && vitest run
+
+
+> textus-plugins@0.0.0 typecheck:cloud-sync
+> tsc --noEmit -p development/cloud-sync/tsconfig.json
+
+Cloud Sync: verified readable host and panel.
+40 manifests, 0 community listings and 20 skills read
+
+ RUN  v4.1.12 <plugin-repo>
+
+
+ Test Files  32 passed (32)
+      Tests  175 passed (175)
+   Start at  09:05:44
+   Duration  3.58s (transform 907ms, setup 0ms, import 1.74s, tests 9.44s, environment 114ms)

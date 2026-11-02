@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="textus-resource:panel.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1 data-t="name"></h1>
+        <p class="muted" data-t="intro"></p>
+      </header>
+      <section class="card sync-status" aria-label="Sync status">
+        <div class="status-row">
+          <div class="status-text">
+            <p
+              id="status"
+              role="status"
+              aria-live="polite"
+              data-t="loading"
+            ></p>
+            <p id="last-run" class="muted small" hidden></p>
+          </div>
+          <div class="actions">
+            <button type="button" id="cancel" data-t="cancel" hidden></button>
+            <button
+              type="button"
+              class="primary"
+              id="sync"
+              data-t="sync"
+              disabled
+            ></button>
+          </div>
+        </div>
+        <progress id="progress" hidden></progress>
+        <div id="results"></div>
+      </section>
+      <form id="connection" autocomplete="off">
+        <fieldset id="fields" disabled>
+          <h2 data-t="connectionTitle"></h2>
+          <div class="card">
+            <div class="segmented" role="radiogroup" id="provider-tabs">
+              <button
+                type="button"
+                role="radio"
+                data-provider="s3"
+                data-t="s3"
+              ></button>
+              <button
+                type="button"
+                role="radio"
+                data-provider="webdav"
+                data-t="webdav"
+              ></button>
+              <button
+                type="button"
+                role="radio"
+                data-provider="nutstore"
+                data-t="nutstore"
+              ></button>
+            </div>
+            <input id="provider" type="hidden" value="s3" />
+            <p id="nutstore-help" class="hint" data-t="nutstoreHelp" hidden></p>
+            <div class="field" id="endpoint-field">
+              <label for="endpoint" data-t="endpoint"></label
+              ><input
+                id="endpoint"
+                type="url"
+                placeholder="https://"
+                spellcheck="false"
+              />
+            </div>
+            <div class="field" id="bucket-field">
+              <label for="bucket" data-t="bucket"></label
+              ><input id="bucket" spellcheck="false" />
+            </div>
+            <div class="columns">
+              <div class="field">
+                <label for="account" id="account-label"></label
+                ><input id="account" autocomplete="off" spellcheck="false" />
+              </div>
+              <div class="field">
+                <label for="secret" id="secret-label"></label
+                ><input
+                  id="secret"
+                  type="password"
+                  autocomplete="new-password"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="prefix" data-t="prefix"></label
+              ><input
+                id="prefix"
+                required
+                aria-describedby="prefix-help"
+                spellcheck="false"
+              />
+              <p id="prefix-help" class="hint" data-t="prefixHelp"></p>
+            </div>
+            <details id="s3-more">
+              <summary data-t="moreOptions"></summary>
+              <div class="columns">
+                <div class="field">
+                  <label for="region" data-t="region"></label
+                  ><input id="region" spellcheck="false" />
+                </div>
+                <div class="field">
+                  <label for="token" data-t="token"></label
+                  ><input
+                    id="token"
+                    type="password"
+                    autocomplete="new-password"
+                  />
+                </div>
+              </div>
+              <label class="check"
+                ><input id="pathStyle" type="checkbox" /><span
+                  data-t="pathStyle"
+                ></span
+              ></label>
+            </details>
+          </div>
+          <h2 data-t="encryptionTitle"></h2>
+          <div class="card">
+            <p class="hint" id="encryption-help" data-t="encryptionHelp"></p>
+            <div class="columns">
+              <div class="field">
+                <label for="sync-password" data-t="syncPassword"></label>
+                <input
+                  id="sync-password"
+                  type="password"
+                  autocomplete="new-password"
+                  minlength="12"
+                  maxlength="1024"
+                  aria-describedby="encryption-help"
+                />
+              </div>
+              <div class="field">
+                <label for="confirm-password" data-t="confirmPassword"></label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  autocomplete="new-password"
+                  maxlength="1024"
+                />
+              </div>
+            </div>
+            <p class="hint" data-t="passwordRecovery"></p>
+          </div>
+          <div class="card switch-row">
+            <label class="switch"
+              ><span data-t="automatic"></span
+              ><input id="automatic" type="checkbox" role="switch"
+            /></label>
+            <div class="field inline" id="interval-field">
+              <label for="interval" data-t="interval"></label
+              ><input
+                id="interval"
+                type="number"
+                min="5"
+                max="1440"
+                step="1"
+                required
+              />
+            </div>
+          </div>
+          <p id="credentials-state" class="hint"></p>
+          <div class="actions">
+            <button type="button" id="test" data-t="test" disabled></button
+            ><button
+              type="button"
+              class="primary"
+              id="save"
+              data-t="save"
+            ></button>
+          </div>
+        </fieldset>
+      </form>
+      <details class="trouble">
+        <summary data-t="advanced"></summary>
+        <p class="hint" data-t="unlockHelp"></p>
+        <button type="button" id="unlock" data-t="unlock" disabled></button>
+      </details>
+    </main>
+    <script src="textus-resource:panel.js"></script>
+  </body>
+</html>

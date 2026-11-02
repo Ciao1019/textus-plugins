@@ -1,0 +1,33 @@
+
+> textus-plugins@0.0.0 test:e2e:cloud-sync
+> playwright test -c e2e/cloud-sync/playwright.config.ts
+
+[WebServer] (node:42956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:43035) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › e2e/cloud-sync/flows.e2e.ts:209:3 › s3: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (3.7s)
+  ✓   2 [chromium] › e2e/cloud-sync/flows.e2e.ts:209:3 › webdav: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (2.5s)
+  ✓   3 [chromium] › e2e/cloud-sync/flows.e2e.ts:209:3 › nutstore: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (2.1s)
+  ✓   4 [chromium] › e2e/cloud-sync/flows.e2e.ts:246:1 › two Textus devices exchange changes and preserve a concurrent edit as a conflict copy (4.6s)
+  ✓   5 [chromium] › e2e/cloud-sync/flows.e2e.ts:291:1 › configuration errors preserve input and Chinese UI fits narrow and dark views (2.9s)
+  ✓   6 [chromium] › e2e/cloud-sync/flows.e2e.ts:334:1 › automatic sync runs on its configured interval and Enter saves through the sandbox bridge (2.7s)
+  ✓   7 [chromium] › e2e/cloud-sync/flows.e2e.ts:352:1 › a wrong sync password leaves both devices unchanged, then the correct password decrypts (4.9s)
+  ✓   8 [chromium] › e2e/cloud-sync/flows.e2e.ts:398:1 › a tampered encrypted manifest never writes local documents (4.2s)
+  ✓   9 [chromium] › e2e/cloud-sync/flows.e2e.ts:431:1 › password confirmation errors retain input and an old plaintext directory is refused (1.9s)
+(node:43995) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  10 [webkit] › e2e/cloud-sync/flows.e2e.ts:209:3 › s3: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (4.4s)
+  ✓  11 [webkit] › e2e/cloud-sync/flows.e2e.ts:209:3 › webdav: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (3.4s)
+  ✓  12 [webkit] › e2e/cloud-sync/flows.e2e.ts:209:3 › nutstore: the packaged plugin saves secrets, connects, and syncs through Textus's sandbox (3.1s)
+  ✓  13 [webkit] › e2e/cloud-sync/flows.e2e.ts:246:1 › two Textus devices exchange changes and preserve a concurrent edit as a conflict copy (9.5s)
+  ✓  14 [webkit] › e2e/cloud-sync/flows.e2e.ts:291:1 › configuration errors preserve input and Chinese UI fits narrow and dark views (2.7s)
+  ✓  15 [webkit] › e2e/cloud-sync/flows.e2e.ts:334:1 › automatic sync runs on its configured interval and Enter saves through the sandbox bridge (3.4s)
+  ✓  16 [webkit] › e2e/cloud-sync/flows.e2e.ts:352:1 › a wrong sync password leaves both devices unchanged, then the correct password decrypts (7.1s)
+  ✓  17 [webkit] › e2e/cloud-sync/flows.e2e.ts:398:1 › a tampered encrypted manifest never writes local documents (8.5s)
+  ✓  18 [webkit] › e2e/cloud-sync/flows.e2e.ts:431:1 › password confirmation errors retain input and an old plaintext directory is refused (2.8s)
+
+  18 passed (1.3m)
