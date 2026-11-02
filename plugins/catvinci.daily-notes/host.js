@@ -148,6 +148,11 @@ exports.activate = function (context) {
       });
       const html = await ctx.plugin.readText("panel.html");
       webview.html = html.replace("{{lang}}", textus.env.language);
+      // Drawn again in the interface's language when that changes.
+      const relabel = textus.env.onDidChangeLanguage(() => {
+        webview.html = html.replace("{{lang}}", textus.env.language);
+      });
+      webview.onDidDispose(() => relabel.dispose());
     },
   });
 };

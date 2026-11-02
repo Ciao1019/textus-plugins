@@ -18,7 +18,8 @@
 // For the market, before a plugin is installed: its README (README.md,
 // README.<lang>.md) and icon go up on the `catalog` release too, and
 // index.json lists where. dist/stats.json, when the release workflow
-// wrote it (scripts/stats.mjs), adds each plugin's installs and dates.
+// wrote it (scripts/stats.mjs), adds each plugin's installs and dates and
+// each skill's installs.
 
 import { createHash } from "node:crypto";
 import {
@@ -70,13 +71,27 @@ function manifestOf(id) {
       throw new Error(`${id}: the manifest has no ${key}`);
   if (typeof manifest.engines?.textus !== "string")
     throw new Error(`${id}: the manifest has no engines.textus`);
+  // Where it runs, said outright: ["desktop", "ios"] or ["desktop"].
+  const platforms = manifest.platforms;
+  if (
+    !Array.isArray(platforms) ||
+    !platforms.length ||
+    !platforms.every((p) => p === "desktop" || p === "ios")
+  )
+    throw new Error(`${id}: platforms must list desktop, ios or both`);
+  const inBackground =
+    !!manifest.background ||
+    (manifest.requires ?? []).some((r) => r.setting === "runInBackground");
+  if (inBackground && manifest.platforms?.includes("ios"))
+    throw new Error(`${id}: works in the background, so not on ios`);
   return manifest;
 }
 
-/** Each plugin's installs and first and latest release dates, when
- *  counted (scripts/stats.mjs). */
+/** Each plugin's installs and first and latest release dates, and each
+ *  skill's installs, when counted (scripts/stats.mjs). */
 const STATS = join(DIST, "stats.json");
 const stats = existsSync(STATS) ? JSON.parse(readFileSync(STATS, "utf8")) : {};
+const statsOf = (kind, id) => stats[kind]?.[id] ?? {};
 
 /** A README's language from its name: README.md is English. */
 const README = /^README(?:\.([A-Za-z]{2,3}(?:-[A-Za-z]+)?))?\.md$/;
@@ -107,7 +122,7 @@ function marketOf(id, manifest, fileList) {
     writeFileSync(join(DIST, asset), iconBytes);
     out.icon = at(asset);
   }
-  return { ...out, ...(stats[id] ?? {}) };
+  return { ...out, ...statsOf("plugin", id) };
 }
 
 /** A plugin's pictures for the market (`screenshots/*.png`, in name
@@ -257,6 +272,7 @@ for (const file of skillFiles) {
     url: `${REPOSITORY}/releases/download/catalog/${asset}`,
     sha256: createHash("sha256").update(skill.bytes).digest("hex"),
     size: skill.bytes.length,
+    ...statsOf("skill", skill.name),
   });
   console.log(`${asset}  ${skill.bytes.length} bytes`);
 }
@@ -290,8 +306,8 @@ for (const file of communityFiles) {
   // The zip the review saw, when the listing pins it.
   if (entry.sha256 && entry.sha256 !== sha256)
     throw new Error(`${url}: not the zip that was reviewed (${entry.sha256})`);
-  const file = `${entry.id}-${entry.version}.zip`;
-  writeFileSync(join(DIST, file), bytes);
+  const asset = `${entry.id}-${entry.version}.zip`;
+  writeFileSync(join(DIST, asset), bytes);
   const inZip = [];
   for (const [name, f] of Object.entries(zip.files))
     if (!f.dir && (README.test(name) || name === manifest.icon))
@@ -301,7 +317,7 @@ for (const file of communityFiles) {
     version: entry.version,
     official: false,
     manifest,
-    url: `${REPOSITORY}/releases/download/${entry.id}-v${entry.version}/${file}`,
+    url: `${REPOSITORY}/releases/download/${entry.id}-v${entry.version}/${asset}`,
     sha256,
     size: bytes.length,
     ...marketOf(entry.id, manifest, inZip),

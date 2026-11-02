@@ -4,18 +4,18 @@
     <link rel="stylesheet" href="textus-resource:panel.css" />
   </head>
   <body>
-    <div class="toolbar">
+    <div class="tx-bar" id="bar">
       <strong id="title"></strong>
-      <span class="spacer"></span>
-      <button id="new" class="primary"></button>
+      <span class="tx-spacer"></span>
+      <button id="new" class="tx-icon-button"><span class="tx-icon" data-icon="plus"></span></button>
     </div>
-    <input id="filter" type="search" hidden />
-    <ul id="notes" class="list"></ul>
+    <input id="filter" class="tx-input" type="search" hidden />
+    <ul id="notes"></ul>
     <div id="undo-bar" class="undo-bar" hidden>
       <span id="undo-text"></span>
       <button id="undo"></button>
     </div>
-    <p id="empty" class="empty" hidden></p>
+    <p id="empty" class="tx-empty" hidden></p>
     <script src="textus-resource:panel.js"></script>
   </body>
 </html>

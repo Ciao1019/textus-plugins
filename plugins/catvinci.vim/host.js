@@ -659,6 +659,23 @@ async function normalKey(key) {
     return;
   }
 
+  // zz, zt, zb (and z., z<CR>, z-): the caret's line to the middle, top or
+  // bottom of the window. A Textus without the op scrolls nothing.
+  if (pending === "z") {
+    pending = "";
+    takeCount();
+    var to = { z: "center", ".": "center", t: "top", Enter: "top", b: "bottom", "-": "bottom" }[key];
+    if (to && !operator) await exec({ op: "scroll", to: to }).catch(function () {});
+    showStatus();
+    return;
+  }
+
+  if (key === "z" && !operator) {
+    pending = "z";
+    showStatus();
+    return;
+  }
+
   if ("fFtT".indexOf(key) >= 0) {
     pending = key;
     showStatus();

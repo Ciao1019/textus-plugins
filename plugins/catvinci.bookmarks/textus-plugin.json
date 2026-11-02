@@ -1,7 +1,7 @@
 {
   "id": "catvinci.bookmarks",
   "name": "%name%",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -11,6 +11,7 @@
   "engines": {
     "textus": ">=1.3.0-beta.2"
   },
+  "platforms": ["desktop", "ios"],
   "main": "host.js",
   "permissions": ["editor.read", "files.read"],
   "activationEvents": ["onStartupFinished"],

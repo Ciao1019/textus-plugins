@@ -1,7 +1,7 @@
 {
   "id": "catvinci.timeline",
   "name": "%name%",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -9,8 +9,9 @@
   "license": "MIT",
   "repository": "https://github.com/CatVinci-Studio/textus-plugins",
   "engines": {
-    "textus": ">=1.3.0-beta.2"
+    "textus": ">=1.3.2"
   },
+  "platforms": ["desktop", "ios"],
   "main": ["lib/chart-host.js", "host.js"],
   "permissions": [],
   "contributes": {
@@ -27,11 +28,11 @@
       "description": "Events in order, a line each: when | what | more."
     },
     "zh": {
-      "name": "时间线",
+      "name": "时间轴图",
       "description": "按顺序排列的事件，每行一个：时间 | 事件 | 说明。"
     },
     "zh-Hant": {
-      "name": "時間軸",
+      "name": "時間軸圖",
       "description": "依序排列的事件，每行一個：時間 | 事件 | 說明。"
     },
     "ja": {

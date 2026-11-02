@@ -1,7 +1,7 @@
 {
   "id": "catvinci.wakatime",
   "name": "%name%",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -9,8 +9,9 @@
   "license": "MIT",
   "repository": "https://github.com/CatVinci-Studio/textus-plugins",
   "engines": {
-    "textus": ">=1.3.0-beta.6"
+    "textus": ">=1.3.0-beta.8"
   },
+  "platforms": ["desktop", "ios"],
   "main": [
     "beat.js",
     "host.js"
@@ -27,6 +28,10 @@
         "title": "%setKey%"
       },
       {
+        "command": "catvinci.wakatime.today",
+        "title": "%todayCmd%"
+      },
+      {
         "command": "catvinci.wakatime.dashboard",
         "title": "%dashboard%"
       }
@@ -35,103 +40,156 @@
   "l10n": {
     "en": {
       "name": "WakaTime",
-      "description": "Sends your writing time in Textus to your WakaTime account, beside your coding: which document, which folder, and when you saved. Nothing is sent until you set your API key.",
+      "description": "Sends your writing time in Textus to your WakaTime account, beside your coding - only while Textus is in front and you are writing; time in the background doesn't count. Works offline: heartbeats wait and go later. Nothing is sent until you set your API key.",
       "setKey": "WakaTime: Set API Key…",
       "dashboard": "WakaTime: Open Dashboard",
       "keyPrompt": "Your WakaTime API key (wakatime.com/settings/api-key). Leave it empty to stop sending.",
       "keySaved": "WakaTime is on: your writing time goes to your dashboard.",
       "keyRemoved": "WakaTime is off: nothing more is sent.",
-      "badKey": "WakaTime didn't accept the API key. Set it again with WakaTime: Set API Key…"
+      "badKey": "WakaTime didn't accept the API key. Set it again with WakaTime: Set API Key…",
+      "todayCmd": "WakaTime: Today's Writing Time",
+      "today": "Today on WakaTime: {0}",
+      "todayFailed": "WakaTime couldn't be reached. Try again later.",
+      "noKey": "Set your WakaTime API key first (WakaTime: Set API Key…).",
+      "keyShape": "That doesn't look like a WakaTime API key (wakatime.com/settings/api-key)."
     },
     "zh": {
       "name": "WakaTime",
-      "description": "把你在 Textus 里的写作时间发到你的 WakaTime 账号，和写代码的时间放在一起：写的哪个文档、在哪个文件夹、什么时候保存。设置 API 密钥之前不会发送任何内容。",
+      "description": "把你在 Textus 里的写作时间发到 WakaTime 账号，和写代码的时间放在一起。只在 Textus 在前台、你在写作时计时，挂在后台的时间不算。离线也能用：记录会先存着，联网后再发。设置 API 密钥之前不会发送任何内容。",
       "setKey": "WakaTime：设置 API 密钥…",
       "dashboard": "WakaTime：打开统计面板",
       "keyPrompt": "你的 WakaTime API 密钥（wakatime.com/settings/api-key）。留空则停止发送。",
       "keySaved": "WakaTime 已开启：写作时间会记录到你的统计面板。",
       "keyRemoved": "WakaTime 已关闭：不再发送任何内容。",
-      "badKey": "WakaTime 没有接受这个 API 密钥。请用「WakaTime：设置 API 密钥…」重新设置。"
+      "badKey": "WakaTime 没有接受这个 API 密钥。请用「WakaTime：设置 API 密钥…」重新设置。",
+      "todayCmd": "WakaTime：今天的写作时间",
+      "today": "WakaTime 今天：{0}",
+      "todayFailed": "连不上 WakaTime，请稍后再试。",
+      "noKey": "请先设置 WakaTime API 密钥（WakaTime：设置 API 密钥…）。",
+      "keyShape": "这看起来不像 WakaTime API 密钥（wakatime.com/settings/api-key）。"
     },
     "zh-Hant": {
       "name": "WakaTime",
-      "description": "把你在 Textus 裡的寫作時間傳到你的 WakaTime 帳號，和寫程式的時間放在一起：寫的哪個文件、在哪個資料夾、什麼時候儲存。設定 API 金鑰之前不會傳送任何內容。",
+      "description": "把你在 Textus 裡的寫作時間送到 WakaTime 帳號，和寫程式的時間放在一起。只在 Textus 在前景、你在寫作時計時，掛在背景的時間不算。離線也能用：記錄會先存著，連網後再送。設定 API 金鑰之前不會送出任何內容。",
       "setKey": "WakaTime：設定 API 金鑰…",
       "dashboard": "WakaTime：開啟統計面板",
       "keyPrompt": "你的 WakaTime API 金鑰（wakatime.com/settings/api-key）。留空則停止傳送。",
       "keySaved": "WakaTime 已開啟：寫作時間會記錄到你的統計面板。",
       "keyRemoved": "WakaTime 已關閉：不再傳送任何內容。",
-      "badKey": "WakaTime 沒有接受這個 API 金鑰。請用「WakaTime：設定 API 金鑰…」重新設定。"
+      "badKey": "WakaTime 沒有接受這個 API 金鑰。請用「WakaTime：設定 API 金鑰…」重新設定。",
+      "todayCmd": "WakaTime：今天的寫作時間",
+      "today": "WakaTime 今天：{0}",
+      "todayFailed": "連不上 WakaTime，請稍後再試。",
+      "noKey": "請先設定 WakaTime API 金鑰（WakaTime：設定 API 金鑰…）。",
+      "keyShape": "這看起來不像 WakaTime API 金鑰（wakatime.com/settings/api-key）。"
     },
     "ja": {
       "name": "WakaTime",
-      "description": "Textus での執筆時間を WakaTime アカウントに送り、コーディングの時間と並べて記録します。どの文書を、どのフォルダで書き、いつ保存したか。API キーを設定するまでは何も送りません。",
+      "description": "Textus での執筆時間を WakaTime のアカウントに送り、コーディングの時間と並べて表示します。Textus が前面にあり執筆している間だけ数え、バックグラウンドの時間は数えません。オフラインでも記録はたまり、あとで送られます。API キーを設定するまで何も送りません。",
       "setKey": "WakaTime：API キーを設定…",
       "dashboard": "WakaTime：ダッシュボードを開く",
       "keyPrompt": "WakaTime の API キー（wakatime.com/settings/api-key）。空にすると送信を止めます。",
       "keySaved": "WakaTime をオンにしました。執筆時間がダッシュボードに記録されます。",
       "keyRemoved": "WakaTime をオフにしました。これ以上は送信しません。",
-      "badKey": "WakaTime が API キーを受け付けませんでした。「WakaTime：API キーを設定…」で設定し直してください。"
+      "badKey": "WakaTime が API キーを受け付けませんでした。「WakaTime：API キーを設定…」で設定し直してください。",
+      "todayCmd": "WakaTime：今日の執筆時間",
+      "today": "今日の WakaTime：{0}",
+      "todayFailed": "WakaTime に接続できません。あとでもう一度お試しください。",
+      "noKey": "先に WakaTime の API キーを設定してください（WakaTime: API キーを設定…）。",
+      "keyShape": "WakaTime の API キーではないようです（wakatime.com/settings/api-key）。"
     },
     "ko": {
       "name": "WakaTime",
-      "description": "Textus에서 글을 쓴 시간을 WakaTime 계정으로 보내 코딩 시간과 함께 기록합니다. 어떤 문서를, 어느 폴더에서 썼는지, 언제 저장했는지. API 키를 설정하기 전에는 아무것도 보내지 않습니다.",
+      "description": "Textus에서 글 쓴 시간을 WakaTime 계정에 보내 코딩 시간과 함께 보여 줍니다. Textus가 앞에 있고 글을 쓰는 동안만 셉니다. 백그라운드 시간은 세지 않습니다. 오프라인에서도 기록이 쌓였다가 나중에 전송됩니다. API 키를 설정하기 전에는 아무것도 보내지 않습니다.",
       "setKey": "WakaTime: API 키 설정…",
       "dashboard": "WakaTime: 대시보드 열기",
       "keyPrompt": "WakaTime API 키(wakatime.com/settings/api-key). 비워 두면 보내지 않습니다.",
       "keySaved": "WakaTime을 켰습니다. 글 쓴 시간이 대시보드에 기록됩니다.",
       "keyRemoved": "WakaTime을 껐습니다. 더 이상 보내지 않습니다.",
-      "badKey": "WakaTime이 API 키를 받아들이지 않았습니다. 'WakaTime: API 키 설정…'으로 다시 설정하세요."
+      "badKey": "WakaTime이 API 키를 받아들이지 않았습니다. 'WakaTime: API 키 설정…'으로 다시 설정하세요.",
+      "todayCmd": "WakaTime: 오늘 글쓰기 시간",
+      "today": "오늘 WakaTime: {0}",
+      "todayFailed": "WakaTime에 연결할 수 없습니다. 나중에 다시 시도하세요.",
+      "noKey": "먼저 WakaTime API 키를 설정하세요(WakaTime: API 키 설정…).",
+      "keyShape": "WakaTime API 키가 아닌 것 같습니다(wakatime.com/settings/api-key)."
     },
     "de": {
       "name": "WakaTime",
-      "description": "Schickt deine Schreibzeit in Textus an dein WakaTime-Konto, neben deine Programmierzeit: welches Dokument, welcher Ordner, wann gespeichert. Ohne API-Schlüssel wird nichts gesendet.",
+      "description": "Sendet Ihre Schreibzeit in Textus an Ihr WakaTime-Konto, neben Ihre Programmierzeit – nur solange Textus vorne ist und Sie schreiben; Zeit im Hintergrund zählt nicht. Funktioniert offline: Heartbeats warten und gehen später. Nichts wird gesendet, bevor Sie Ihren API-Schlüssel festlegen.",
       "setKey": "WakaTime: API-Schlüssel festlegen…",
       "dashboard": "WakaTime: Dashboard öffnen",
       "keyPrompt": "Dein WakaTime-API-Schlüssel (wakatime.com/settings/api-key). Leer lassen, um nichts mehr zu senden.",
       "keySaved": "WakaTime ist an: Deine Schreibzeit erscheint im Dashboard.",
       "keyRemoved": "WakaTime ist aus: Es wird nichts mehr gesendet.",
-      "badKey": "WakaTime hat den API-Schlüssel nicht angenommen. Lege ihn mit „WakaTime: API-Schlüssel festlegen…“ neu fest."
+      "badKey": "WakaTime hat den API-Schlüssel nicht angenommen. Lege ihn mit „WakaTime: API-Schlüssel festlegen…“ neu fest.",
+      "todayCmd": "WakaTime: Heutige Schreibzeit",
+      "today": "Heute bei WakaTime: {0}",
+      "todayFailed": "WakaTime ist nicht erreichbar. Versuchen Sie es später noch einmal.",
+      "noKey": "Legen Sie zuerst Ihren WakaTime-API-Schlüssel fest (WakaTime: API-Schlüssel festlegen …).",
+      "keyShape": "Das sieht nicht nach einem WakaTime-API-Schlüssel aus (wakatime.com/settings/api-key)."
     },
     "fr": {
       "name": "WakaTime",
-      "description": "Envoie votre temps d’écriture dans Textus à votre compte WakaTime, à côté de votre temps de code : quel document, quel dossier, quand vous avez enregistré. Rien n’est envoyé tant que la clé d’API n’est pas définie.",
+      "description": "Envoie votre temps d’écriture dans Textus à votre compte WakaTime, à côté de votre temps de code – seulement quand Textus est au premier plan et que vous écrivez ; le temps en arrière-plan ne compte pas. Fonctionne hors ligne : les pulsations attendent et partent plus tard. Rien n’est envoyé avant que vous définissiez votre clé d’API.",
       "setKey": "WakaTime : définir la clé d’API…",
       "dashboard": "WakaTime : ouvrir le tableau de bord",
       "keyPrompt": "Votre clé d’API WakaTime (wakatime.com/settings/api-key). Laissez vide pour ne plus rien envoyer.",
       "keySaved": "WakaTime est activé : votre temps d’écriture apparaît dans le tableau de bord.",
       "keyRemoved": "WakaTime est désactivé : plus rien n’est envoyé.",
-      "badKey": "WakaTime n’a pas accepté la clé d’API. Définissez-la de nouveau avec « WakaTime : définir la clé d’API… »."
+      "badKey": "WakaTime n’a pas accepté la clé d’API. Définissez-la de nouveau avec « WakaTime : définir la clé d’API… ».",
+      "todayCmd": "WakaTime : temps d’écriture du jour",
+      "today": "Aujourd’hui sur WakaTime : {0}",
+      "todayFailed": "Impossible de joindre WakaTime. Réessayez plus tard.",
+      "noKey": "Définissez d’abord votre clé d’API WakaTime (WakaTime : définir la clé d’API…).",
+      "keyShape": "Cela ne ressemble pas à une clé d’API WakaTime (wakatime.com/settings/api-key)."
     },
     "es": {
       "name": "WakaTime",
-      "description": "Envía tu tiempo de escritura en Textus a tu cuenta de WakaTime, junto a tu tiempo de programación: qué documento, qué carpeta y cuándo guardaste. No se envía nada hasta que configures tu clave de API.",
+      "description": "Envía tu tiempo de escritura en Textus a tu cuenta de WakaTime, junto a tu tiempo programando, solo mientras Textus está delante y escribes; el tiempo en segundo plano no cuenta. Funciona sin conexión: los latidos esperan y se envían después. No se envía nada hasta que pongas tu clave de API.",
       "setKey": "WakaTime: configurar clave de API…",
       "dashboard": "WakaTime: abrir el panel",
       "keyPrompt": "Tu clave de API de WakaTime (wakatime.com/settings/api-key). Déjala vacía para dejar de enviar.",
       "keySaved": "WakaTime activado: tu tiempo de escritura aparece en tu panel.",
       "keyRemoved": "WakaTime desactivado: no se envía nada más.",
-      "badKey": "WakaTime no aceptó la clave de API. Vuelve a configurarla con «WakaTime: configurar clave de API…»."
+      "badKey": "WakaTime no aceptó la clave de API. Vuelve a configurarla con «WakaTime: configurar clave de API…».",
+      "todayCmd": "WakaTime: tiempo de escritura de hoy",
+      "today": "Hoy en WakaTime: {0}",
+      "todayFailed": "No se pudo conectar con WakaTime. Inténtalo más tarde.",
+      "noKey": "Primero pon tu clave de API de WakaTime (WakaTime: Poner clave de API…).",
+      "keyShape": "Eso no parece una clave de API de WakaTime (wakatime.com/settings/api-key)."
     },
     "pt": {
       "name": "WakaTime",
-      "description": "Envia o seu tempo de escrita no Textus para a sua conta WakaTime, ao lado do tempo de programação: qual documento, qual pasta e quando salvou. Nada é enviado até você definir a chave de API.",
+      "description": "Envia seu tempo de escrita no Textus para sua conta do WakaTime, ao lado do tempo programando, só enquanto o Textus está na frente e você escreve; tempo em segundo plano não conta. Funciona offline: os registros esperam e vão depois. Nada é enviado antes de você definir sua chave de API.",
       "setKey": "WakaTime: definir chave de API…",
       "dashboard": "WakaTime: abrir o painel",
       "keyPrompt": "Sua chave de API do WakaTime (wakatime.com/settings/api-key). Deixe vazio para parar de enviar.",
       "keySaved": "WakaTime ligado: seu tempo de escrita aparece no painel.",
       "keyRemoved": "WakaTime desligado: nada mais é enviado.",
-      "badKey": "O WakaTime não aceitou a chave de API. Defina-a de novo com “WakaTime: definir chave de API…”."
+      "badKey": "O WakaTime não aceitou a chave de API. Defina-a de novo com “WakaTime: definir chave de API…”.",
+      "todayCmd": "WakaTime: tempo de escrita de hoje",
+      "today": "Hoje no WakaTime: {0}",
+      "todayFailed": "Não foi possível acessar o WakaTime. Tente mais tarde.",
+      "noKey": "Defina primeiro sua chave de API do WakaTime (WakaTime: Definir chave de API…).",
+      "keyShape": "Isso não parece uma chave de API do WakaTime (wakatime.com/settings/api-key)."
     },
     "ru": {
       "name": "WakaTime",
-      "description": "Отправляет время, проведённое за письмом в Textus, в ваш аккаунт WakaTime — рядом со временем программирования: какой документ, какая папка, когда сохранено. Пока не задан ключ API, ничего не отправляется.",
+      "description": "Отправляет время письма в Textus в ваш аккаунт WakaTime рядом со временем программирования — только пока Textus на переднем плане и вы пишете; время в фоне не считается. Работает офлайн: записи ждут и уходят позже. Ничего не отправляется, пока вы не зададите ключ API.",
       "setKey": "WakaTime: задать ключ API…",
       "dashboard": "WakaTime: открыть панель",
       "keyPrompt": "Ваш ключ API WakaTime (wakatime.com/settings/api-key). Оставьте пустым, чтобы больше не отправлять.",
       "keySaved": "WakaTime включён: время письма появляется на панели.",
       "keyRemoved": "WakaTime выключен: больше ничего не отправляется.",
-      "badKey": "WakaTime не принял ключ API. Задайте его снова командой «WakaTime: задать ключ API…»."
+      "badKey": "WakaTime не принял ключ API. Задайте его снова командой «WakaTime: задать ключ API…».",
+      "todayCmd": "WakaTime: время письма сегодня",
+      "today": "Сегодня в WakaTime: {0}",
+      "todayFailed": "Не удаётся связаться с WakaTime. Попробуйте позже.",
+      "noKey": "Сначала задайте ключ API WakaTime (WakaTime: задать ключ API…).",
+      "keyShape": "Это не похоже на ключ API WakaTime (wakatime.com/settings/api-key)."
     }
-  }
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ]
 }

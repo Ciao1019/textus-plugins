@@ -4,24 +4,24 @@
     <link rel="stylesheet" href="textus-resource:view.css" />
   </head>
   <body>
-    <div class="toolbar">
-      <span id="name" class="muted"></span>
-      <span class="spacer"></span>
-      <span id="page" class="muted"></span>
-      <button class="icon" id="zoom-out">−</button>
-      <button id="zoom" class="muted">100%</button>
-      <button class="icon" id="zoom-in">+</button>
-      <button class="icon" id="find-open">⌕</button>
-      <button id="edit" class="primary"></button>
+    <div class="tx-bar" id="bar">
+      <span id="name"></span>
+      <span class="tx-spacer"></span>
+      <span id="page"></span>
+      <button class="tx-icon-button" id="zoom-out"><span class="tx-icon" data-icon="minus"></span></button>
+      <button class="tx-button small" id="zoom">100%</button>
+      <button class="tx-icon-button" id="zoom-in"><span class="tx-icon" data-icon="plus"></span></button>
+      <button class="tx-icon-button" id="find-open"><span class="tx-icon" data-icon="search"></span></button>
+      <button class="tx-button small primary" id="edit"></button>
     </div>
-    <div id="find-bar" class="toolbar" hidden>
-      <input id="find-input" type="search" />
-      <span id="find-count" class="muted"></span>
-      <span class="spacer"></span>
-      <button class="icon" id="find-close">×</button>
+    <div id="find-bar" class="tx-bar" hidden>
+      <input class="tx-input" id="find-input" type="search" />
+      <span id="find-count"></span>
+      <span class="tx-spacer"></span>
+      <button class="tx-icon-button" id="find-close"><span class="tx-icon" data-icon="close"></span></button>
     </div>
     <main id="pages"></main>
-    <p id="status" class="empty"></p>
+    <p id="status" class="tx-empty"></p>
     <script src="textus-resource:lib/jszip.min.js"></script>
     <script src="textus-resource:lib/docx-preview.min.js"></script>
     <script src="textus-resource:view.js"></script>

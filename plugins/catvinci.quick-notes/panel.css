@@ -1,89 +1,87 @@
+/* The Quick Notes tab: a sidebar panel (design-language.md 5.4) - a title
+   row, a search once there are many, the notes as cards. */
 body {
-  background: var(--sidebar-bg);
+  background: var(--ui-subtle);
 }
-#notes {
-  padding: var(--space-2);
+#bar {
+  padding: var(--space-2) var(--space-3) 0;
 }
-#notes > li {
-  display: block;
-  margin-bottom: var(--space-2);
-  padding: var(--space-2);
-  background: var(--bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-block);
+#title {
+  font-size: var(--text-body);
+  font-weight: 600;
 }
-textarea {
-  display: block;
-  width: 100%;
-  min-height: 3.6em;
-  resize: vertical;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  line-height: 1.5;
-}
-textarea:focus {
-  outline: none;
-}
-.note-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1);
-  margin-top: var(--space-1);
-}
-/* A line of its own: beside the buttons a narrow sidebar broke it up. */
-.note-actions .when {
-  flex: 1 0 100%;
-  white-space: nowrap;
-  font-size: var(--text-xs);
-}
-.note-actions button {
-  min-height: 0;
-  padding: 2px var(--space-2);
-  font-size: var(--text-xs);
-}
-
-/* The search over many notes. */
 #filter {
   display: block;
-  box-sizing: border-box;
   width: calc(100% - 2 * var(--space-3));
   margin: var(--space-2) var(--space-3) 0;
 }
 #filter[hidden] {
   display: none;
 }
+#notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  list-style: none;
+}
+#notes > li {
+  padding: var(--space-3) var(--space-3) var(--space-1);
+}
+#notes textarea {
+  display: block;
+  width: 100%;
+  min-height: 3.6em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ui-text);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+#notes textarea:focus {
+  outline: none;
+}
+.note-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.note-foot .when {
+  color: var(--ui-muted);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
 /* Deleted, with Undo, at the foot of the panel for a few seconds. */
 .undo-bar {
   position: fixed;
-  left: var(--space-3);
   right: var(--space-3);
   bottom: var(--space-3);
+  left: var(--space-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--editor-text);
-  color: var(--bg);
-  font-size: var(--text-sm);
-  animation: undo-in var(--dur-base, 180ms) var(--ease-out, ease-out);
+  border-radius: var(--shape-m);
+  background: var(--ui-primary);
+  color: var(--ui-on-primary);
+  font-size: var(--text-footnote);
+  --enter-y: var(--motion-distance-sm, 6px);
+  animation: motion-enter var(--dur-base) var(--ease-out) backwards;
 }
 .undo-bar[hidden] {
   display: none;
 }
 .undo-bar button {
-  border: 0;
+  padding: 0;
+  border: none;
   background: none;
   color: inherit;
+  font: inherit;
   font-weight: 600;
   text-decoration: underline;
-}
-@keyframes undo-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
 }

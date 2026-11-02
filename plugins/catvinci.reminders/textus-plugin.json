@@ -1,0 +1,197 @@
+{
+  "id": "catvinci.reminders",
+  "name": "%name%",
+  "version": "0.1.1",
+  "publisher": "catvinci",
+  "author": "CatVinci Studio",
+  "description": "%description%",
+  "icon": "icon.svg",
+  "license": "MIT",
+  "repository": "https://github.com/CatVinci-Studio/textus-plugins",
+  "engines": {
+    "textus": ">=1.3.0-beta.8"
+  },
+  "platforms": ["desktop"],
+  "main": [
+    "reminders.js",
+    "host.js"
+  ],
+  "permissions": [
+    "files.read",
+    "editor.write",
+    "notifications"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "catvinci.reminders.remind",
+        "title": "%remind%"
+      }
+    ],
+    "menus": {
+      "editor/slash": [
+        {
+          "command": "catvinci.reminders.remind"
+        }
+      ],
+      "app/plugins": [
+        {
+          "command": "catvinci.reminders.remind"
+        }
+      ]
+    },
+    "sidebarTabs": [
+      {
+        "id": "catvinci.reminders.list",
+        "title": "%name%",
+        "icon": "tab.svg",
+        "type": "list"
+      }
+    ]
+  },
+  "l10n": {
+    "en": {
+      "name": "Reminders",
+      "description": "Write (@2026-11-02 09:00) in a line and be reminded of it then, with a notification - even with Textus's windows closed in background mode. A click opens the line.",
+      "remind": "Remind Me…",
+      "when": "When?",
+      "inHour": "In an hour",
+      "tonight": "Tonight at 8",
+      "tomorrow": "Tomorrow at 9",
+      "nextWeek": "Next Monday at 9",
+      "pickTime": "Pick a time…",
+      "typeTime": "Date and time (2026-11-02 09:00)",
+      "badTime": "That isn't a date and time like 2026-11-02 09:00.",
+      "none": "Nothing to be reminded of yet. Write (@2026-11-02 09:00) in a line."
+    },
+    "zh": {
+      "name": "提醒",
+      "description": "在一行里写上 (@2026-11-02 09:00)，到时就会弹通知提醒你这一行；开启常驻后台后，关掉窗口也照样提醒。点通知会打开那一行。",
+      "remind": "提醒我…",
+      "when": "什么时候？",
+      "inHour": "一小时后",
+      "tonight": "今晚 8 点",
+      "tomorrow": "明天 9 点",
+      "nextWeek": "下周一 9 点",
+      "pickTime": "选择时间…",
+      "typeTime": "日期和时间（2026-11-02 09:00）",
+      "badTime": "请写成 2026-11-02 09:00 这样的日期和时间。",
+      "none": "还没有提醒。在一行里写上 (@2026-11-02 09:00) 就行。"
+    },
+    "zh-Hant": {
+      "name": "提醒",
+      "description": "在一行裡寫上 (@2026-11-02 09:00)，到時就會跳出通知提醒你這一行；開啟常駐背景後，關掉視窗也照樣提醒。點通知會打開那一行。",
+      "remind": "提醒我…",
+      "when": "什麼時候？",
+      "inHour": "一小時後",
+      "tonight": "今晚 8 點",
+      "tomorrow": "明天 9 點",
+      "nextWeek": "下週一 9 點",
+      "pickTime": "選擇時間…",
+      "typeTime": "日期和時間（2026-11-02 09:00）",
+      "badTime": "請寫成 2026-11-02 09:00 這樣的日期和時間。",
+      "none": "還沒有提醒。在一行裡寫上 (@2026-11-02 09:00) 就行。"
+    },
+    "ja": {
+      "name": "リマインダー",
+      "description": "行に (@2026-11-02 09:00) と書くと、その時刻に通知でお知らせします。バックグラウンドモードならウィンドウを閉じていても届きます。クリックでその行を開きます。",
+      "remind": "リマインド…",
+      "when": "いつ？",
+      "inHour": "1 時間後",
+      "tonight": "今夜 8 時",
+      "tomorrow": "明日 9 時",
+      "nextWeek": "来週月曜 9 時",
+      "pickTime": "時刻を選ぶ…",
+      "typeTime": "日付と時刻（2026-11-02 09:00）",
+      "badTime": "2026-11-02 09:00 のような日付と時刻にしてください。",
+      "none": "まだリマインダーはありません。行に (@2026-11-02 09:00) と書いてください。"
+    },
+    "ko": {
+      "name": "알림",
+      "description": "줄에 (@2026-11-02 09:00)을 쓰면 그때 알림으로 알려 줍니다. 백그라운드 모드에서는 창을 닫아도 옵니다. 클릭하면 그 줄을 엽니다.",
+      "remind": "알림 설정…",
+      "when": "언제?",
+      "inHour": "1시간 후",
+      "tonight": "오늘 밤 8시",
+      "tomorrow": "내일 9시",
+      "nextWeek": "다음 주 월요일 9시",
+      "pickTime": "시간 고르기…",
+      "typeTime": "날짜와 시간(2026-11-02 09:00)",
+      "badTime": "2026-11-02 09:00 같은 날짜와 시간이 아닙니다.",
+      "none": "아직 알림이 없습니다. 줄에 (@2026-11-02 09:00)을 쓰세요."
+    },
+    "de": {
+      "name": "Erinnerungen",
+      "description": "Schreiben Sie (@2026-11-02 09:00) in eine Zeile und werden Sie dann per Mitteilung daran erinnert – im Hintergrundmodus auch bei geschlossenen Fenstern. Ein Klick öffnet die Zeile.",
+      "remind": "Erinnere mich …",
+      "when": "Wann?",
+      "inHour": "In einer Stunde",
+      "tonight": "Heute um 20 Uhr",
+      "tomorrow": "Morgen um 9 Uhr",
+      "nextWeek": "Nächsten Montag um 9 Uhr",
+      "pickTime": "Zeit wählen …",
+      "typeTime": "Datum und Uhrzeit (2026-11-02 09:00)",
+      "badTime": "Das ist kein Datum mit Uhrzeit wie 2026-11-02 09:00.",
+      "none": "Noch keine Erinnerungen. Schreiben Sie (@2026-11-02 09:00) in eine Zeile."
+    },
+    "es": {
+      "name": "Recordatorios",
+      "description": "Escribe (@2026-11-02 09:00) en una línea y te avisará entonces con una notificación, incluso con las ventanas cerradas en modo segundo plano. Un clic abre la línea.",
+      "remind": "Recordarme…",
+      "when": "¿Cuándo?",
+      "inHour": "En una hora",
+      "tonight": "Esta noche a las 8",
+      "tomorrow": "Mañana a las 9",
+      "nextWeek": "El lunes que viene a las 9",
+      "pickTime": "Elegir hora…",
+      "typeTime": "Fecha y hora (2026-11-02 09:00)",
+      "badTime": "Eso no es una fecha y hora como 2026-11-02 09:00.",
+      "none": "Aún no hay recordatorios. Escribe (@2026-11-02 09:00) en una línea."
+    },
+    "fr": {
+      "name": "Rappels",
+      "description": "Écrivez (@2026-11-02 09:00) dans une ligne et une notification vous la rappelle à ce moment-là, même fenêtres fermées en mode arrière-plan. Un clic ouvre la ligne.",
+      "remind": "Me rappeler…",
+      "when": "Quand ?",
+      "inHour": "Dans une heure",
+      "tonight": "Ce soir à 20 h",
+      "tomorrow": "Demain à 9 h",
+      "nextWeek": "Lundi prochain à 9 h",
+      "pickTime": "Choisir l’heure…",
+      "typeTime": "Date et heure (2026-11-02 09:00)",
+      "badTime": "Ce n’est pas une date et une heure comme 2026-11-02 09:00.",
+      "none": "Pas encore de rappel. Écrivez (@2026-11-02 09:00) dans une ligne."
+    },
+    "pt": {
+      "name": "Lembretes",
+      "description": "Escreva (@2026-11-02 09:00) numa linha e seja lembrado dela nessa hora com uma notificação, mesmo com as janelas fechadas no modo em segundo plano. Um clique abre a linha.",
+      "remind": "Lembrar-me…",
+      "when": "Quando?",
+      "inHour": "Daqui a uma hora",
+      "tonight": "Hoje às 20h",
+      "tomorrow": "Amanhã às 9h",
+      "nextWeek": "Segunda que vem às 9h",
+      "pickTime": "Escolher horário…",
+      "typeTime": "Data e hora (2026-11-02 09:00)",
+      "badTime": "Isso não é uma data e hora como 2026-11-02 09:00.",
+      "none": "Ainda não há lembretes. Escreva (@2026-11-02 09:00) numa linha."
+    },
+    "ru": {
+      "name": "Напоминания",
+      "description": "Напишите в строке (@2026-11-02 09:00), и в это время придёт уведомление — в фоновом режиме даже при закрытых окнах. Щелчок открывает строку.",
+      "remind": "Напомнить…",
+      "when": "Когда?",
+      "inHour": "Через час",
+      "tonight": "Сегодня в 20:00",
+      "tomorrow": "Завтра в 9:00",
+      "nextWeek": "В следующий понедельник в 9:00",
+      "pickTime": "Выбрать время…",
+      "typeTime": "Дата и время (2026-11-02 09:00)",
+      "badTime": "Это не дата и время вида 2026-11-02 09:00.",
+      "none": "Напоминаний пока нет. Напишите в строке (@2026-11-02 09:00)."
+    }
+  }
+}

@@ -62,6 +62,11 @@ exports.activate = function (ctx) {
       async resolve(webview) {
         const page = await ctxRef.plugin.readText("slides.html");
         webview.html = page.replace("{{lang}}", textus.env.language);
+        // Drawn again in the interface's language when that changes.
+        const relabel = textus.env.onDidChangeLanguage(() => {
+          webview.html = page.replace("{{lang}}", textus.env.language);
+        });
+        webview.onDidDispose(() => relabel.dispose());
         views.add(webview);
         webview.onDidDispose(() => views.delete(webview));
         webview.onDidReceiveMessage((message) => {

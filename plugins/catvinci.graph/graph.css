@@ -20,25 +20,28 @@ canvas {
   cursor: grab;
   touch-action: none;
 }
+#bar {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--ui-border);
+}
 #stats {
-  font-size: var(--text-xs);
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.toolbar button {
-  white-space: nowrap;
-  flex: none;
-}
 #status:empty {
   display: none;
 }
 #settings[aria-expanded="true"] {
-  color: var(--chrome-accent);
+  color: var(--ui-accent);
 }
 
-/* The settings panel, over the graph's corner as in Obsidian. */
+/* The settings panel over the graph's corner: an overlay (design-language.md
+   7), its rows as Settings' are. */
 #panel {
   position: absolute;
   top: var(--space-2);
@@ -46,59 +49,80 @@ canvas {
   width: min(17rem, calc(100% - 2 * var(--space-2)));
   max-height: calc(100% - 2 * var(--space-2));
   overflow-y: auto;
-  padding: var(--space-1) 0;
-  background: var(--bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-control);
-  box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
-  font-size: var(--text-sm);
-  color: var(--sidebar-text);
+  padding: var(--space-1);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--shape-m);
+  background: var(--ui-surface);
+  box-shadow: var(--shadow-popover);
+  color: var(--ui-text);
+  font-size: var(--text-body);
 }
 #panel[hidden] {
   display: none;
 }
 #panel details + details {
-  border-top: 1px solid var(--border-color);
+  margin-top: var(--space-1);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--ui-border);
 }
 #panel summary {
-  padding: var(--space-1) var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--shape-s);
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
   font-weight: 600;
-  color: var(--chrome-text);
+  list-style: none;
   cursor: pointer;
   user-select: none;
+}
+#panel summary::-webkit-details-marker {
+  display: none;
+}
+#panel summary:hover {
+  background: var(--ui-hover);
+}
+#panel summary .tx-icon {
+  width: 12px;
+  height: 12px;
+  transform: rotate(-90deg);
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+#panel details[open] summary .tx-icon {
+  transform: none;
 }
 #panel label,
 #panel .group {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 3px var(--space-3);
+  min-height: var(--control-height);
+  padding: 0 var(--space-2);
 }
 #panel label > span {
   flex: 1;
 }
 #panel input[type="range"] {
-  width: 6.5rem;
+  width: 104px;
   padding: 0;
-  accent-color: var(--chrome-accent);
+  accent-color: var(--ui-accent);
 }
-#panel input[type="checkbox"] {
-  accent-color: var(--chrome-accent);
-}
-#panel input[type="search"],
-#panel .group input[type="text"] {
+#panel .tx-input {
   flex: 1;
   min-width: 0;
 }
 #panel input[type="color"] {
-  width: 1.6rem;
-  height: 1.4rem;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
+  border-radius: 50%;
   background: none;
 }
 #panel .actions {
   display: flex;
-  justify-content: space-between;
-  padding: var(--space-1) var(--space-3) var(--space-2);
+  justify-content: flex-start;
+  padding: var(--space-1) var(--space-2) var(--space-2);
 }

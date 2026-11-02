@@ -1,4 +1,4 @@
-# Slides
+# Marp
 
 Present a document as slides, written the [Marp](https://marp.app) way.
 

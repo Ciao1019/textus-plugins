@@ -3,10 +3,17 @@
 var current = null;
 
 function make(canvas, config, dark) {
-  var ink = dark ? "#e6e6e6" : "#333333";
-  var grid = dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)";
-  Chart.defaults.color = ink;
-  Chart.defaults.borderColor = grid;
+  var c = chartColors(dark);
+  Chart.defaults.color = c.muted;
+  Chart.defaults.borderColor = c.grid;
+  // Series without colours of their own take the theme's tones, in order.
+  var pie = /^(pie|doughnut|polarArea)$/;
+  ((config.data && config.data.datasets) || []).forEach(function (d, i) {
+    var round = pie.test(d.type || config.type);
+    var tone = c.tones[i % c.tones.length];
+    if (d.backgroundColor === undefined) d.backgroundColor = round ? c.tones : tone;
+    if (d.borderColor === undefined) d.borderColor = round ? c.bg : tone;
+  });
   return new Chart(
     canvas,
     Object.assign({}, config, {
@@ -39,7 +46,7 @@ drawChartBlock({
     out.width = canvas.width;
     out.height = canvas.height;
     var ctx = out.getContext("2d");
-    ctx.fillStyle = dark ? "#1e1e1e" : "#ffffff";
+    ctx.fillStyle = chartColors(dark).bg;
     ctx.fillRect(0, 0, out.width, out.height);
     ctx.drawImage(canvas, 0, 0);
     chart.destroy();

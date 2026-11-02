@@ -4,15 +4,14 @@
     <link rel="stylesheet" href="textus-resource:panel.css" />
   </head>
   <body>
-    <div class="toolbar">
-      <button class="icon" id="prev">‹</button>
+    <div class="tx-bar" id="bar">
       <strong id="month"></strong>
-      <button class="icon" id="next">›</button>
-      <span class="spacer"></span>
-      <button id="today"></button>
+      <button class="tx-icon-button" id="prev"><span class="tx-icon" data-icon="left"></span></button>
+      <button class="tx-button small" id="today"></button>
+      <button class="tx-icon-button" id="next"><span class="tx-icon" data-icon="right"></span></button>
     </div>
     <div id="grid" role="grid"></div>
-    <p id="nofolder" class="empty" hidden></p>
+    <p id="nofolder" class="tx-empty" hidden></p>
     <script src="textus-resource:panel.js"></script>
   </body>
 </html>

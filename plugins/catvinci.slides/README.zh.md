@@ -1,4 +1,4 @@
-# 幻灯片
+# Marp
 
 用 [Marp](https://marp.app) 的写法把文档做成幻灯片。
 

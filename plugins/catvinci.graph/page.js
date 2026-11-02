@@ -42,7 +42,15 @@
     ],
     ["groups", []],
   ];
-  const GROUP_COLORS = ["#e0607e", "#4d9de0", "#3bb273", "#e1bc29", "#7768ae"];
+  // A new group's colour: the theme's tones, in their order, as #rrggbb
+  // (what a colour field takes).
+  const TONES = ["blue", "green", "orange", "purple", "red", "teal", "yellow", "pink"];
+  const ink = document.createElement("canvas").getContext("2d");
+  const toneHex = (name) => {
+    ink.fillStyle = "#808080";
+    ink.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--tone-" + name).trim() || "#808080";
+    return ink.fillStyle;
+  };
 
   let settings = null;
   const open = new Set(["filters"]);
@@ -52,6 +60,11 @@
   function el(tag, props, children) {
     const node = Object.assign(document.createElement(tag), props);
     for (const child of children || []) node.append(child);
+    return node;
+  }
+  function icon(name) {
+    const node = el("span", { className: "tx-icon" });
+    node.dataset.icon = name;
     return node;
   }
 
@@ -71,6 +84,7 @@
     if (kind === "search") {
       const input = el("input", {
         type: "search",
+        className: "tx-input",
         value: settings.search,
         placeholder: t("search"),
       });
@@ -79,7 +93,7 @@
       return el("label", {}, [input]);
     }
     if (kind === "toggle") {
-      const input = el("input", { type: "checkbox", checked: !!settings[key] });
+      const input = el("input", { type: "checkbox", className: "ui-check", checked: !!settings[key] });
       input.addEventListener("change", () => change(key, input.checked));
       return el("label", {}, [el("span", { textContent: label }), input]);
     }
@@ -103,16 +117,14 @@
       color.setAttribute("aria-label", t("set.color"));
       const query = el("input", {
         type: "text",
+        className: "tx-input",
         value: group.query,
         placeholder: t("set.groupQuery"),
       });
       query.setAttribute("aria-label", t("set.groupQuery"));
-      const remove = el("button", {
-        type: "button",
-        className: "icon",
-        textContent: "×",
-        title: t("set.removeGroup"),
-      });
+      const remove = el("button", { type: "button", className: "tx-icon-button" }, [
+        icon("close"),
+      ]);
       remove.setAttribute("aria-label", t("set.removeGroup"));
       const update = (patch) =>
         change(
@@ -130,13 +142,13 @@
       };
       return el("div", { className: "group" }, [color, query, remove]);
     });
-    const add = el("button", { type: "button", textContent: t("set.newGroup") });
+    const add = el("button", { type: "button", className: "tx-button small", textContent: t("set.newGroup") });
     add.onclick = () => {
       change(
         "groups",
         settings.groups.concat({
           query: "",
-          color: GROUP_COLORS[settings.groups.length % GROUP_COLORS.length],
+          color: toneHex(TONES[settings.groups.length % TONES.length]),
         }),
       );
       render();
@@ -149,7 +161,10 @@
   function render() {
     const sections = SECTIONS.map(([name, rows]) => {
       const details = el("details", { open: open.has(name) }, [
-        el("summary", { textContent: t("set." + name) }),
+        el("summary", {}, [
+          icon("chevron"),
+          el("span", { textContent: t("set." + name) }),
+        ]),
       ]);
       details.addEventListener("toggle", () =>
         details.open ? open.add(name) : open.delete(name),
@@ -160,7 +175,7 @@
     });
     const reset = el("button", {
       type: "button",
-      className: "icon",
+      className: "tx-button small",
       textContent: t("set.reset"),
     });
     reset.onclick = () => {
@@ -175,7 +190,6 @@
 
 
   const gear = $("settings");
-  gear.title = t("set.title");
   gear.setAttribute("aria-label", t("set.title"));
   gear.onclick = () => {
     panel.hidden = !panel.hidden;

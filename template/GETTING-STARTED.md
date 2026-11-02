@@ -41,6 +41,31 @@ textus.editor.registerDecorations({
       .map((b) => ({ block: b.id, anchor: "TODO", style: "highlight", tone: "warning" })),
 });
 
+// A reminder every morning at nine, kept across restarts (API 1.1:
+// "notifications" in permissions, and "files.read" for `open`). Clicking
+// it opens the journal at its first line.
+textus.schedule.set("morning", {
+  daily: "09:00",
+  notify: {
+    title: "Morning pages",
+    body: "Three pages before anything else.",
+    open: { path: "journal.md", line: 0 },
+  },
+});
+
+// Work on a schedule with no window needed (API 1.1: "background" in
+// permissions and "background": "background.js" in the manifest). In
+// background.js, `exports.sync = async (job, ctx) => { ... }` runs for 30 s
+// at most, with files, net, storage and notify but no editor or UI.
+textus.schedule.set("sync", { every: "1h", run: "sync" });
+
+// Who changed the document (API 1.1): "user", "ai", "disk", "plugin" or
+// "history" - to count only the user's own writing.
+let lastTyped = 0;
+textus.editor.onDidChange(({ source }) => {
+  if (source === "user") lastTyped = Date.now();
+});
+
 // Before a save: the front matter's "updated" set to today (files.write).
 textus.files.onWillSave(({ text }) =>
   text.replace(/^updated: .*$/m, `updated: ${new Date().toISOString().slice(0, 10)}`),

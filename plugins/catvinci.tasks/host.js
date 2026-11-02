@@ -122,5 +122,7 @@ exports.activate = function (ctx) {
     textus.metadata.onDidChange(refresh),
     textus.files.onDidChangeRoot(refresh),
     textus.settings.onDidChange(refresh),
+    // Its count and dates in the interface's language.
+    textus.env.onDidChangeLanguage(refresh),
   );
 };

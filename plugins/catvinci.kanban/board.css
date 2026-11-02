@@ -1,3 +1,5 @@
+/* A kanban board in a tab (design-language.md 5.4, tab view): a bar, then
+   lists on the page's tint with cards. Controls are Textus's own. */
 html,
 body {
   height: 100%;
@@ -5,71 +7,84 @@ body {
 body {
   display: flex;
   flex-direction: column;
+  background: var(--doc-bg, var(--ui-bg));
+}
+#bar {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--ui-border);
+}
+#state {
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
 }
 #board {
-  flex: 1;
-  min-height: 0;
   display: flex;
+  flex: 1;
   align-items: flex-start;
   gap: var(--space-3);
+  min-height: 0;
   padding: var(--space-4);
   overflow: auto;
-  background: var(--sidebar-bg);
 }
 .list {
+  display: flex;
   flex: none;
+  flex-direction: column;
+  gap: var(--space-2);
   width: 260px;
   max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-block);
+  padding: var(--space-2);
+  border-radius: var(--shape-m);
+  background: var(--ui-subtle);
 }
 .list-head {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-2) var(--space-3);
+  min-height: var(--control-height-sm);
+  padding: 0 var(--space-1);
+  cursor: grab;
 }
 .list-title {
   flex: 1;
+  color: var(--ui-text);
   font-weight: 600;
-  color: var(--chrome-text);
   cursor: text;
 }
 .list-count {
-  font-size: var(--text-xs);
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
 }
 .cards {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
   min-height: 24px;
-  overflow-y: auto;
-  padding: 0 var(--space-2) var(--space-2);
-  list-style: none;
   margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
 }
 .cards.drop-target {
-  background: var(--sidebar-hover);
-  border-radius: var(--radius-small);
+  border-radius: var(--shape-s);
+  background: var(--ui-hover);
 }
 .card {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
-  padding: var(--space-2);
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-small);
+  padding: var(--space-3);
   cursor: grab;
 }
-.card.dragging {
+.card.dragging,
+.list.dragging {
   opacity: 0.4;
 }
 .card.done .card-text {
+  color: var(--ui-muted);
   text-decoration: line-through;
-  color: var(--chrome-muted);
 }
 .card-text {
   flex: 1;
@@ -77,47 +92,45 @@ body {
   word-break: break-word;
   cursor: text;
 }
-.card input[type="checkbox"] {
-  margin-top: 3px;
+.card .ui-check {
+  margin-top: 2px;
 }
-.card textarea,
-.list-head input {
+.inline-field {
   flex: 1;
   width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
   font: inherit;
+  resize: none;
 }
-.card textarea {
+.inline-field:focus {
+  outline: none;
+}
+textarea.inline-field {
   min-height: 3em;
-  resize: vertical;
 }
 .add-card {
-  margin: 0 var(--space-2) var(--space-2);
-  border-style: dashed;
+  align-self: flex-start;
 }
-.icon.remove {
+.remove {
   visibility: hidden;
-  font-size: var(--text-xs);
 }
-.list-head:hover .icon.remove,
-.card:hover .icon.remove {
+.list-head:hover .remove,
+.card:hover .remove,
+.remove:focus-visible {
   visibility: visible;
 }
-
 /* A card's [[link]] to a note. */
 .note-link {
-  color: var(--chrome-accent);
+  color: var(--ui-accent);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
   text-underline-offset: 2px;
 }
-/* A list being moved, and where it will go. */
-.list.dragging {
-  opacity: 0.5;
-}
+/* Where a moved list will go. */
 .list.list-drop {
-  outline: 2px dashed color-mix(in srgb, var(--chrome-accent) 50%, transparent);
+  outline: 2px solid var(--ui-accent);
   outline-offset: 2px;
-}
-.list-head {
-  cursor: grab;
 }

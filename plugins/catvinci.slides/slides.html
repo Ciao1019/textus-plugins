@@ -5,13 +5,13 @@
     <style id="deck"></style>
   </head>
   <body>
-    <div class="bar">
-      <button id="prev" aria-label="←">←</button>
+    <div class="tx-bar" id="bar">
+      <button class="tx-icon-button" id="prev" aria-label="←"><span class="tx-icon" data-icon="left"></span></button>
       <span id="count"></span>
-      <button id="next" aria-label="→">→</button>
-      <span class="spacer"></span>
-      <button id="export"></button>
-      <button id="full"></button>
+      <button class="tx-icon-button" id="next" aria-label="→"><span class="tx-icon" data-icon="right"></span></button>
+      <span class="tx-spacer"></span>
+      <button class="tx-button small" id="export"></button>
+      <button class="tx-button small primary" id="full"></button>
     </div>
     <main id="stage"></main>
     <script src="textus-resource:page.js"></script>

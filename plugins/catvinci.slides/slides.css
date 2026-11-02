@@ -1,53 +1,55 @@
+/* A Marp deck in a tab (design-language.md 5.4, tab view): the bar, then
+   the slide shown, centred on the page's tint. */
 html,
 body {
   height: 100%;
   margin: 0;
-  background: var(--textus-bg, #f4f4f2);
-  color: var(--textus-text, #222);
-  font: 13px -apple-system, "Segoe UI", sans-serif;
+  background: var(--ui-subtle);
+  color: var(--ui-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
 }
 body {
   display: flex;
   flex-direction: column;
 }
-.bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
+#bar {
+  flex: none;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--ui-border);
+  background: var(--ui-bg);
 }
-.spacer {
-  flex: 1;
-}
-button {
-  padding: 2px 10px;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 6px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
+#count {
+  color: var(--ui-muted);
+  font-size: var(--text-footnote);
 }
 #stage {
   flex: 1;
   min-height: 0;
-  padding: 0 16px 16px;
+  padding: var(--space-4);
 }
 #stage div.marpit {
-  height: 100%;
   display: grid;
+  height: 100%;
   place-items: center;
 }
 #stage div.marpit > svg {
   display: none;
   max-width: 100%;
   max-height: 100%;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  border-radius: var(--shape-xs);
+  box-shadow: 0 0 0 1px var(--ui-border);
 }
 #stage div.marpit > svg.on {
   display: block;
 }
+/* Presenting: the slide alone on black, as a projector shows it. */
 :fullscreen #stage {
   padding: 0;
-  background: #000;
+  background: black;
+}
+:fullscreen #stage div.marpit > svg {
+  border-radius: 0;
+  box-shadow: none;
 }

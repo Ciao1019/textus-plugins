@@ -1,0 +1,249 @@
+{
+  "id": "catvinci.pages",
+  "name": "%name%",
+  "version": "0.1.1",
+  "publisher": "catvinci",
+  "author": "CatVinci Studio",
+  "description": "%description%",
+  "icon": "icon.svg",
+  "license": "MIT",
+  "repository": "https://github.com/CatVinci-Studio/textus-plugins",
+  "engines": {
+    "textus": ">=1.3.0-beta.8"
+  },
+  "platforms": ["desktop", "ios"],
+  "main": [
+    "pages.js",
+    "host.js"
+  ],
+  "permissions": [
+    "files.read",
+    "files.write",
+    "editor.read",
+    "editor.write"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "catvinci.pages.newSubpage",
+        "title": "%newSubpage%"
+      },
+      {
+        "command": "catvinci.pages.setIcon",
+        "title": "%setIcon%"
+      },
+      {
+        "command": "catvinci.pages.up",
+        "title": "%up%"
+      }
+    ],
+    "menus": {
+      "editor/slash": [
+        {
+          "command": "catvinci.pages.newSubpage"
+        }
+      ],
+      "file/context": [
+        {
+          "command": "catvinci.pages.newSubpage",
+          "when": "fileExtension == .md"
+        },
+        {
+          "command": "catvinci.pages.setIcon",
+          "when": "fileExtension == .md"
+        }
+      ],
+      "app/plugins": [
+        {
+          "command": "catvinci.pages.newSubpage"
+        },
+        {
+          "command": "catvinci.pages.setIcon"
+        }
+      ]
+    },
+    "sidebarTabs": [
+      {
+        "id": "catvinci.pages.tree",
+        "title": "%name%",
+        "icon": "tab.svg",
+        "type": "list"
+      }
+    ]
+  },
+  "l10n": {
+    "en": {
+      "name": "Pages",
+      "description": "Documents as pages inside pages: a page tree in the sidebar, sub-pages made and linked from the / menu, page icons, and the pages above the one you're in.",
+      "newSubpage": "New Sub-page…",
+      "setIcon": "Set Page Icon…",
+      "up": "Pages above this one",
+      "subpageTitle": "Sub-page title",
+      "needsFolder": "Open a folder first: pages are the documents in it.",
+      "needsSaved": "Save this document first: its sub-pages go in a folder beside it.",
+      "outside": "This document isn't in the open folder.",
+      "exists": "“{0}” is already there.",
+      "removeIcon": "No icon",
+      "otherIcon": "Other…",
+      "iconPrompt": "An emoji for this page",
+      "empty": "No documents in the open folder.",
+      "filter": "Find a page"
+    },
+    "zh": {
+      "name": "页面树",
+      "description": "把文档当作层层嵌套的页面：侧边栏里的页面树，用 / 菜单新建并链接子页面，页面图标，以及当前页面所在的上级页面。",
+      "newSubpage": "新建子页面…",
+      "setIcon": "设置页面图标…",
+      "up": "上级页面",
+      "subpageTitle": "子页面标题",
+      "needsFolder": "请先打开一个文件夹：页面就是其中的文档。",
+      "needsSaved": "请先保存这篇文档：它的子页面会放在旁边的同名文件夹里。",
+      "outside": "这篇文档不在打开的文件夹里。",
+      "exists": "“{0}”已经存在。",
+      "removeIcon": "不要图标",
+      "otherIcon": "其他…",
+      "iconPrompt": "给这个页面一个表情符号",
+      "empty": "打开的文件夹里还没有文档。",
+      "filter": "查找页面"
+    },
+    "zh-Hant": {
+      "name": "頁面樹",
+      "description": "把文件當作層層巢狀的頁面：側邊欄裡的頁面樹，用 / 選單新增並連結子頁面，頁面圖示，以及目前頁面所在的上層頁面。",
+      "newSubpage": "新增子頁面…",
+      "setIcon": "設定頁面圖示…",
+      "up": "上層頁面",
+      "subpageTitle": "子頁面標題",
+      "needsFolder": "請先打開一個資料夾：頁面就是其中的文件。",
+      "needsSaved": "請先儲存這份文件：它的子頁面會放在旁邊的同名資料夾裡。",
+      "outside": "這份文件不在打開的資料夾裡。",
+      "exists": "「{0}」已經存在。",
+      "removeIcon": "不要圖示",
+      "otherIcon": "其他…",
+      "iconPrompt": "給這個頁面一個表情符號",
+      "empty": "打開的資料夾裡還沒有文件。",
+      "filter": "尋找頁面"
+    },
+    "ja": {
+      "name": "ページ",
+      "description": "文書をページの入れ子として扱います。サイドバーのページツリー、/ メニューでのサブページ作成とリンク、ページアイコン、今いるページの上位ページ。",
+      "newSubpage": "サブページを作成…",
+      "setIcon": "ページアイコンを設定…",
+      "up": "上位のページ",
+      "subpageTitle": "サブページのタイトル",
+      "needsFolder": "先にフォルダを開いてください。ページはその中の文書です。",
+      "needsSaved": "先にこの文書を保存してください。サブページは隣の同名フォルダに作られます。",
+      "outside": "この文書は開いているフォルダの中にありません。",
+      "exists": "「{0}」はすでにあります。",
+      "removeIcon": "アイコンなし",
+      "otherIcon": "その他…",
+      "iconPrompt": "このページの絵文字",
+      "empty": "開いているフォルダに文書がありません。",
+      "filter": "ページを検索"
+    },
+    "ko": {
+      "name": "페이지",
+      "description": "문서를 페이지 속 페이지로: 사이드바의 페이지 트리, / 메뉴로 만들고 연결하는 하위 페이지, 페이지 아이콘, 지금 페이지의 상위 페이지.",
+      "newSubpage": "새 하위 페이지…",
+      "setIcon": "페이지 아이콘 설정…",
+      "up": "상위 페이지",
+      "subpageTitle": "하위 페이지 제목",
+      "needsFolder": "먼저 폴더를 여세요. 페이지는 그 안의 문서입니다.",
+      "needsSaved": "먼저 이 문서를 저장하세요. 하위 페이지는 옆의 같은 이름 폴더에 만들어집니다.",
+      "outside": "이 문서는 열린 폴더 안에 없습니다.",
+      "exists": "“{0}”이(가) 이미 있습니다.",
+      "removeIcon": "아이콘 없음",
+      "otherIcon": "기타…",
+      "iconPrompt": "이 페이지의 이모지",
+      "empty": "열린 폴더에 문서가 없습니다.",
+      "filter": "페이지 찾기"
+    },
+    "de": {
+      "name": "Seiten",
+      "description": "Dokumente als Seiten in Seiten: ein Seitenbaum in der Seitenleiste, Unterseiten über das /-Menü anlegen und verlinken, Seitensymbole und die Seiten über der aktuellen.",
+      "newSubpage": "Neue Unterseite …",
+      "setIcon": "Seitensymbol festlegen …",
+      "up": "Übergeordnete Seiten",
+      "subpageTitle": "Titel der Unterseite",
+      "needsFolder": "Öffnen Sie zuerst einen Ordner: Seiten sind die Dokumente darin.",
+      "needsSaved": "Speichern Sie dieses Dokument zuerst: Seine Unterseiten kommen in einen Ordner daneben.",
+      "outside": "Dieses Dokument liegt nicht im geöffneten Ordner.",
+      "exists": "„{0}“ gibt es schon.",
+      "removeIcon": "Kein Symbol",
+      "otherIcon": "Anderes …",
+      "iconPrompt": "Ein Emoji für diese Seite",
+      "empty": "Keine Dokumente im geöffneten Ordner.",
+      "filter": "Seite suchen"
+    },
+    "es": {
+      "name": "Páginas",
+      "description": "Documentos como páginas dentro de páginas: un árbol de páginas en la barra lateral, subpáginas creadas y enlazadas desde el menú /, iconos de página y las páginas por encima de la actual.",
+      "newSubpage": "Nueva subpágina…",
+      "setIcon": "Poner icono de página…",
+      "up": "Páginas superiores",
+      "subpageTitle": "Título de la subpágina",
+      "needsFolder": "Abre primero una carpeta: las páginas son sus documentos.",
+      "needsSaved": "Guarda primero este documento: sus subpáginas van en una carpeta a su lado.",
+      "outside": "Este documento no está en la carpeta abierta.",
+      "exists": "«{0}» ya existe.",
+      "removeIcon": "Sin icono",
+      "otherIcon": "Otro…",
+      "iconPrompt": "Un emoji para esta página",
+      "empty": "No hay documentos en la carpeta abierta.",
+      "filter": "Buscar una página"
+    },
+    "fr": {
+      "name": "Pages",
+      "description": "Des documents en pages imbriquées : une arborescence de pages dans la barre latérale, des sous-pages créées et liées depuis le menu /, des icônes de page et les pages au-dessus de celle ouverte.",
+      "newSubpage": "Nouvelle sous-page…",
+      "setIcon": "Définir l’icône de la page…",
+      "up": "Pages parentes",
+      "subpageTitle": "Titre de la sous-page",
+      "needsFolder": "Ouvrez d’abord un dossier : les pages sont ses documents.",
+      "needsSaved": "Enregistrez d’abord ce document : ses sous-pages vont dans un dossier à côté.",
+      "outside": "Ce document n’est pas dans le dossier ouvert.",
+      "exists": "« {0} » existe déjà.",
+      "removeIcon": "Aucune icône",
+      "otherIcon": "Autre…",
+      "iconPrompt": "Un emoji pour cette page",
+      "empty": "Aucun document dans le dossier ouvert.",
+      "filter": "Chercher une page"
+    },
+    "pt": {
+      "name": "Páginas",
+      "description": "Documentos como páginas dentro de páginas: uma árvore de páginas na barra lateral, subpáginas criadas e ligadas pelo menu /, ícones de página e as páginas acima da atual.",
+      "newSubpage": "Nova subpágina…",
+      "setIcon": "Definir ícone da página…",
+      "up": "Páginas acima",
+      "subpageTitle": "Título da subpágina",
+      "needsFolder": "Abra uma pasta primeiro: as páginas são os documentos nela.",
+      "needsSaved": "Salve este documento primeiro: as subpáginas ficam numa pasta ao lado.",
+      "outside": "Este documento não está na pasta aberta.",
+      "exists": "“{0}” já existe.",
+      "removeIcon": "Sem ícone",
+      "otherIcon": "Outro…",
+      "iconPrompt": "Um emoji para esta página",
+      "empty": "Nenhum documento na pasta aberta.",
+      "filter": "Encontrar uma página"
+    },
+    "ru": {
+      "name": "Страницы",
+      "description": "Документы как страницы внутри страниц: дерево страниц в боковой панели, подстраницы из меню / со ссылкой на них, значки страниц и страницы над текущей.",
+      "newSubpage": "Новая подстраница…",
+      "setIcon": "Значок страницы…",
+      "up": "Страницы выше",
+      "subpageTitle": "Название подстраницы",
+      "needsFolder": "Сначала откройте папку: страницы — это документы в ней.",
+      "needsSaved": "Сначала сохраните документ: его подстраницы будут в папке рядом.",
+      "outside": "Этот документ не в открытой папке.",
+      "exists": "«{0}» уже есть.",
+      "removeIcon": "Без значка",
+      "otherIcon": "Другой…",
+      "iconPrompt": "Эмодзи для этой страницы",
+      "empty": "В открытой папке нет документов.",
+      "filter": "Найти страницу"
+    }
+  }
+}

@@ -1,0 +1,420 @@
+{
+  "id": "catvinci.quick-insert",
+  "name": "%name%",
+  "version": "0.1.1",
+  "publisher": "catvinci",
+  "author": "CatVinci Studio",
+  "description": "%description%",
+  "icon": "icon.svg",
+  "license": "MIT",
+  "repository": "https://github.com/CatVinci-Studio/textus-plugins",
+  "engines": {
+    "textus": ">=1.3.0-beta.8"
+  },
+  "platforms": ["desktop", "ios"],
+  "main": [
+    "emoji.js",
+    "host.js"
+  ],
+  "permissions": [
+    "editor.read",
+    "editor.write"
+  ],
+  "activationEvents": [
+    "onEditor"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "catvinci.quick-insert.h1",
+        "title": "%h1%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "h1"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.h2",
+        "title": "%h2%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "h2"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.h3",
+        "title": "%h3%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "h3"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.text",
+        "title": "%text%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "paragraph"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.bullet",
+        "title": "%bullet%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "bullet-list"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.numbered",
+        "title": "%numbered%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "ordered-list"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.task",
+        "title": "%task%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "task-list"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.quote",
+        "title": "%quote%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "blockquote"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.code",
+        "title": "%code%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "code-block"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.math",
+        "title": "%math%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "math-block"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.table",
+        "title": "%table%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "table"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.divider",
+        "title": "%divider%",
+        "runs": {
+          "command": "textus.insertBlock",
+          "args": [
+            "rule"
+          ]
+        }
+      },
+      {
+        "command": "catvinci.quick-insert.callout",
+        "title": "%callout%"
+      },
+      {
+        "command": "catvinci.quick-insert.date",
+        "title": "%date%"
+      },
+      {
+        "command": "catvinci.quick-insert.turnInto",
+        "title": "%turnInto%"
+      }
+    ],
+    "menus": {
+      "editor/slash": [
+        {
+          "command": "catvinci.quick-insert.h1"
+        },
+        {
+          "command": "catvinci.quick-insert.h2"
+        },
+        {
+          "command": "catvinci.quick-insert.h3"
+        },
+        {
+          "command": "catvinci.quick-insert.text"
+        },
+        {
+          "command": "catvinci.quick-insert.bullet"
+        },
+        {
+          "command": "catvinci.quick-insert.numbered"
+        },
+        {
+          "command": "catvinci.quick-insert.task"
+        },
+        {
+          "command": "catvinci.quick-insert.quote"
+        },
+        {
+          "command": "catvinci.quick-insert.code"
+        },
+        {
+          "command": "catvinci.quick-insert.math"
+        },
+        {
+          "command": "catvinci.quick-insert.table"
+        },
+        {
+          "command": "catvinci.quick-insert.divider"
+        },
+        {
+          "command": "catvinci.quick-insert.callout"
+        },
+        {
+          "command": "catvinci.quick-insert.date"
+        },
+        {
+          "command": "catvinci.quick-insert.turnInto"
+        }
+      ]
+    },
+    "completions": [
+      {
+        "id": "catvinci.quick-insert.emoji",
+        "where": "text",
+        "pattern": "(?<=^|\\s):[\\p{L}\\p{N}_+-]{2,30}"
+      }
+    ]
+  },
+  "l10n": {
+    "en": {
+      "name": "Quick Insert",
+      "description": "Type / for headings, lists, tables, formulas and more, : for emoji, and turn a paragraph into another kind of block.",
+      "turnPlaceholder": "Turn this paragraph into",
+      "h1": "Heading 1",
+      "h2": "Heading 2",
+      "h3": "Heading 3",
+      "text": "Text",
+      "bullet": "Bulleted list",
+      "numbered": "Numbered list",
+      "task": "To-do list",
+      "quote": "Quote",
+      "code": "Code block",
+      "math": "Formula",
+      "table": "Table",
+      "divider": "Divider",
+      "callout": "Callout",
+      "date": "Today's date",
+      "turnInto": "Turn into…"
+    },
+    "zh": {
+      "name": "快速插入",
+      "description": "输入 / 插入标题、列表、表格、公式等，输入 : 插入表情，还能把段落转换成别的块。",
+      "turnPlaceholder": "把这一段转换为",
+      "h1": "标题 1",
+      "h2": "标题 2",
+      "h3": "标题 3",
+      "text": "正文",
+      "bullet": "无序列表",
+      "numbered": "有序列表",
+      "task": "待办列表",
+      "quote": "引用",
+      "code": "代码块",
+      "math": "公式",
+      "table": "表格",
+      "divider": "分隔线",
+      "callout": "提示框",
+      "date": "今天的日期",
+      "turnInto": "转换为…"
+    },
+    "zh-Hant": {
+      "name": "快速插入",
+      "description": "輸入 / 插入標題、清單、表格、公式等，輸入 : 插入表情符號，還能把段落轉換成別的區塊。",
+      "turnPlaceholder": "把這一段轉換為",
+      "h1": "標題 1",
+      "h2": "標題 2",
+      "h3": "標題 3",
+      "text": "內文",
+      "bullet": "項目符號清單",
+      "numbered": "編號清單",
+      "task": "待辦清單",
+      "quote": "引用",
+      "code": "程式碼區塊",
+      "math": "公式",
+      "table": "表格",
+      "divider": "分隔線",
+      "callout": "提示框",
+      "date": "今天的日期",
+      "turnInto": "轉換為…"
+    },
+    "ja": {
+      "name": "クイック挿入",
+      "description": "/ で見出し・リスト・表・数式などを、: で絵文字を挿入。段落を別の種類のブロックに変換することもできます。",
+      "turnPlaceholder": "この段落を変換",
+      "h1": "見出し 1",
+      "h2": "見出し 2",
+      "h3": "見出し 3",
+      "text": "本文",
+      "bullet": "箇条書きリスト",
+      "numbered": "番号付きリスト",
+      "task": "ToDo リスト",
+      "quote": "引用",
+      "code": "コードブロック",
+      "math": "数式",
+      "table": "表",
+      "divider": "区切り線",
+      "callout": "コールアウト",
+      "date": "今日の日付",
+      "turnInto": "変換…"
+    },
+    "ko": {
+      "name": "빠른 삽입",
+      "description": "/ 로 제목·목록·표·수식 등을, : 로 이모지를 넣고, 문단을 다른 종류의 블록으로 바꿉니다.",
+      "turnPlaceholder": "이 문단을 다음으로 변환",
+      "h1": "제목 1",
+      "h2": "제목 2",
+      "h3": "제목 3",
+      "text": "본문",
+      "bullet": "글머리 기호 목록",
+      "numbered": "번호 목록",
+      "task": "할 일 목록",
+      "quote": "인용",
+      "code": "코드 블록",
+      "math": "수식",
+      "table": "표",
+      "divider": "구분선",
+      "callout": "콜아웃",
+      "date": "오늘 날짜",
+      "turnInto": "변환…"
+    },
+    "de": {
+      "name": "Schnelleinfügen",
+      "description": "Mit / Überschriften, Listen, Tabellen, Formeln und mehr einfügen, mit : Emojis – und einen Absatz in eine andere Blockart umwandeln.",
+      "turnPlaceholder": "Diesen Absatz umwandeln in",
+      "h1": "Überschrift 1",
+      "h2": "Überschrift 2",
+      "h3": "Überschrift 3",
+      "text": "Text",
+      "bullet": "Aufzählung",
+      "numbered": "Nummerierte Liste",
+      "task": "Aufgabenliste",
+      "quote": "Zitat",
+      "code": "Codeblock",
+      "math": "Formel",
+      "table": "Tabelle",
+      "divider": "Trennlinie",
+      "callout": "Hinweis",
+      "date": "Heutiges Datum",
+      "turnInto": "Umwandeln in …"
+    },
+    "es": {
+      "name": "Inserción rápida",
+      "description": "Escribe / para títulos, listas, tablas, fórmulas y más, : para emojis, y convierte un párrafo en otro tipo de bloque.",
+      "turnPlaceholder": "Convertir este párrafo en",
+      "h1": "Título 1",
+      "h2": "Título 2",
+      "h3": "Título 3",
+      "text": "Texto",
+      "bullet": "Lista con viñetas",
+      "numbered": "Lista numerada",
+      "task": "Lista de tareas",
+      "quote": "Cita",
+      "code": "Bloque de código",
+      "math": "Fórmula",
+      "table": "Tabla",
+      "divider": "Separador",
+      "callout": "Aviso",
+      "date": "Fecha de hoy",
+      "turnInto": "Convertir en…"
+    },
+    "fr": {
+      "name": "Insertion rapide",
+      "description": "Tapez / pour les titres, listes, tableaux, formules et plus, : pour les emoji, et transformez un paragraphe en un autre type de bloc.",
+      "turnPlaceholder": "Transformer ce paragraphe en",
+      "h1": "Titre 1",
+      "h2": "Titre 2",
+      "h3": "Titre 3",
+      "text": "Texte",
+      "bullet": "Liste à puces",
+      "numbered": "Liste numérotée",
+      "task": "Liste de tâches",
+      "quote": "Citation",
+      "code": "Bloc de code",
+      "math": "Formule",
+      "table": "Tableau",
+      "divider": "Séparateur",
+      "callout": "Encadré",
+      "date": "Date du jour",
+      "turnInto": "Transformer en…"
+    },
+    "pt": {
+      "name": "Inserção rápida",
+      "description": "Digite / para títulos, listas, tabelas, fórmulas e mais, : para emojis, e transforme um parágrafo em outro tipo de bloco.",
+      "turnPlaceholder": "Transformar este parágrafo em",
+      "h1": "Título 1",
+      "h2": "Título 2",
+      "h3": "Título 3",
+      "text": "Texto",
+      "bullet": "Lista com marcadores",
+      "numbered": "Lista numerada",
+      "task": "Lista de tarefas",
+      "quote": "Citação",
+      "code": "Bloco de código",
+      "math": "Fórmula",
+      "table": "Tabela",
+      "divider": "Divisor",
+      "callout": "Destaque",
+      "date": "Data de hoje",
+      "turnInto": "Transformar em…"
+    },
+    "ru": {
+      "name": "Быстрая вставка",
+      "description": "Введите / для заголовков, списков, таблиц, формул и другого, : для эмодзи — и превращайте абзац в блок другого вида.",
+      "turnPlaceholder": "Превратить этот абзац в",
+      "h1": "Заголовок 1",
+      "h2": "Заголовок 2",
+      "h3": "Заголовок 3",
+      "text": "Текст",
+      "bullet": "Маркированный список",
+      "numbered": "Нумерованный список",
+      "task": "Список задач",
+      "quote": "Цитата",
+      "code": "Блок кода",
+      "math": "Формула",
+      "table": "Таблица",
+      "divider": "Разделитель",
+      "callout": "Выноска",
+      "date": "Сегодняшняя дата",
+      "turnInto": "Преобразовать в…"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "catvinci.slides",
   "name": "%name%",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -9,8 +9,9 @@
   "license": "MIT",
   "repository": "https://github.com/CatVinci-Studio/textus-plugins",
   "engines": {
-    "textus": ">=1.3.0-beta.6"
+    "textus": ">=1.3.2"
   },
+  "platforms": ["desktop", "ios"],
   "main": [
     "lib/marp-core.js",
     "host.js"
@@ -50,7 +51,7 @@
   },
   "l10n": {
     "en": {
-      "name": "Slides",
+      "name": "Marp",
       "description": "Present a document as slides, the Marp way: a new slide at each ---, themes and layout by Marp directives. The deck follows your writing in a tab beside it, and saves as one HTML file to present from any browser.",
       "present": "Present as Slides",
       "exportCommand": "Export Slides as HTML",
@@ -61,7 +62,7 @@
       "exported": "Saved {0}"
     },
     "zh": {
-      "name": "幻灯片",
+      "name": "Marp",
       "description": "用 Marp 的方式把文档做成幻灯片：每个 --- 开始一页，主题和版式用 Marp 指令设置。幻灯片在旁边的标签页里随写作实时更新，也能存成一个 HTML 文件，用任何浏览器放映。",
       "present": "以幻灯片放映",
       "exportCommand": "导出幻灯片为 HTML",
@@ -72,7 +73,7 @@
       "exported": "已保存 {0}"
     },
     "zh-Hant": {
-      "name": "投影片",
+      "name": "Marp",
       "description": "用 Marp 的方式把文件做成投影片：每個 --- 開始一頁，主題和版式用 Marp 指令設定。投影片在旁邊的分頁裡隨寫作即時更新，也能存成一個 HTML 檔，用任何瀏覽器播放。",
       "present": "以投影片播放",
       "exportCommand": "匯出投影片為 HTML",
@@ -83,7 +84,7 @@
       "exported": "已儲存 {0}"
     },
     "ja": {
-      "name": "スライド",
+      "name": "Marp",
       "description": "文書を Marp 流のスライドにします。--- ごとに新しいスライド、テーマとレイアウトは Marp のディレクティブで。隣のタブで書くそばから更新され、1 つの HTML ファイルとして保存すればどのブラウザでも発表できます。",
       "present": "スライドで発表",
       "exportCommand": "スライドを HTML に書き出す",
@@ -94,7 +95,7 @@
       "exported": "{0} を保存しました"
     },
     "ko": {
-      "name": "슬라이드",
+      "name": "Marp",
       "description": "문서를 Marp 방식의 슬라이드로 보여 줍니다. ---마다 새 슬라이드, 테마와 배치는 Marp 지시어로. 옆 탭에서 글을 쓰는 대로 바뀌고, HTML 파일 하나로 저장하면 어떤 브라우저에서든 발표할 수 있습니다.",
       "present": "슬라이드로 발표",
       "exportCommand": "슬라이드를 HTML로 내보내기",
@@ -105,7 +106,7 @@
       "exported": "{0} 저장함"
     },
     "de": {
-      "name": "Folien",
+      "name": "Marp",
       "description": "Präsentiere ein Dokument als Folien, wie mit Marp: eine neue Folie bei jedem ---, Themes und Layout über Marp-Direktiven. Die Folien folgen deinem Schreiben in einem Tab daneben und lassen sich als eine HTML-Datei speichern, die in jedem Browser läuft.",
       "present": "Als Folien präsentieren",
       "exportCommand": "Folien als HTML exportieren",
@@ -116,7 +117,7 @@
       "exported": "{0} gespeichert"
     },
     "fr": {
-      "name": "Diapositives",
+      "name": "Marp",
       "description": "Présentez un document en diapositives, à la manière de Marp : une nouvelle diapositive à chaque ---, thèmes et mise en page par directives Marp. Le diaporama suit votre écriture dans un onglet à côté et s'enregistre en un fichier HTML à présenter depuis n'importe quel navigateur.",
       "present": "Présenter en diapositives",
       "exportCommand": "Exporter les diapositives en HTML",
@@ -127,7 +128,7 @@
       "exported": "{0} enregistré"
     },
     "es": {
-      "name": "Diapositivas",
+      "name": "Marp",
       "description": "Presenta un documento como diapositivas al estilo Marp: una nueva en cada ---, temas y diseño con directivas de Marp. Las diapositivas siguen lo que escribes en una pestaña al lado y se guardan como un archivo HTML para presentar desde cualquier navegador.",
       "present": "Presentar como diapositivas",
       "exportCommand": "Exportar diapositivas como HTML",
@@ -138,7 +139,7 @@
       "exported": "Guardado {0}"
     },
     "pt": {
-      "name": "Slides",
+      "name": "Marp",
       "description": "Apresente um documento como slides, do jeito do Marp: um novo slide a cada ---, temas e layout por diretivas do Marp. Os slides acompanham a escrita numa aba ao lado e são salvos como um arquivo HTML para apresentar em qualquer navegador.",
       "present": "Apresentar como slides",
       "exportCommand": "Exportar slides como HTML",
@@ -149,7 +150,7 @@
       "exported": "{0} salvo"
     },
     "ru": {
-      "name": "Слайды",
+      "name": "Marp",
       "description": "Показывайте документ как слайды в стиле Marp: новый слайд после каждого ---, темы и вёрстка через директивы Marp. Слайды следуют за текстом во вкладке рядом и сохраняются одним HTML-файлом для показа в любом браузере.",
       "present": "Показать как слайды",
       "exportCommand": "Экспортировать слайды в HTML",

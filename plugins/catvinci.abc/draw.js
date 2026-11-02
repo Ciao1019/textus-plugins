@@ -3,7 +3,7 @@ function engrave(el, source, dark, responsive) {
   el.replaceChildren();
   ABCJS.renderAbc(el, source, {
     responsive: responsive ? "resize" : undefined,
-    foregroundColor: dark ? "#e6e6e6" : "#000000",
+    foregroundColor: chartColors(dark).ink,
   });
 }
 

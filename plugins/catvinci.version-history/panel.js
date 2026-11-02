@@ -125,19 +125,20 @@
         const actions = document.createElement("div");
         actions.className = "actions";
         const restore = document.createElement("button");
-        restore.className = "primary";
+        restore.className = "tx-button small primary";
         restore.textContent = t("restore");
         restore.onclick = (e) => {
           e.stopPropagation();
           api.postMessage({ type: "restore", at: version.at });
         };
         const open = document.createElement("button");
+        open.className = "tx-button small";
         open.textContent = t("open");
         open.onclick = (e) => {
           e.stopPropagation();
           api.postMessage({ type: "open", at: version.at });
         };
-        actions.append(restore, open);
+        actions.append(open, restore);
         li.append(label, diffNode(version), actions);
       }
       li.onclick = () => {

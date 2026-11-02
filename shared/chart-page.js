@@ -4,7 +4,7 @@
 // of theme draws it again. An export asks for a picture (onExport): the
 // chart's SVG, or `picture` when the plugin has a better one (a canvas, a
 // light version for paper). Shared by the chart plugins as lib/chart-page.js.
-/* exported drawChartBlock, parseLoose */
+/* exported drawChartBlock, parseLoose, chartColors */
 (function () {
   "use strict";
   var api = acquireTextusApi();
@@ -66,6 +66,38 @@
     return document.documentElement.dataset.theme === "dark";
   }
 
+  // A chart's colours (design-language.md 15.6): the theme's text, muted,
+  // border and tones on screen; for a picture in the other appearance (a
+  // light export from a dark window), Textus's default ones.
+  var TONES = ["blue", "green", "orange", "purple", "red", "teal", "yellow", "pink", "gray"];
+  var DEFAULTS = {
+    light: {
+      bg: "#ffffff", ink: "#24272e", muted: "#646b77", grid: "#e1e4ea",
+      tones: ["#4081d2", "#319751", "#be6517", "#8e6ac7", "#c65954", "#00989a", "#a17a00", "#bc598c", "#77818c"],
+    },
+    dark: {
+      bg: "#1b1e24", ink: "#e4e7ed", muted: "#989da6", grid: "#33363c",
+      tones: ["#7aaeef", "#76be86", "#e09865", "#b59be6", "#e88f87", "#3fc0c0", "#c6a853", "#df8db5", "#a2acb7"],
+    },
+  };
+  window.chartColors = function (isDark) {
+    var fixed = DEFAULTS[isDark ? "dark" : "light"];
+    if (!!isDark !== dark()) return fixed;
+    var css = getComputedStyle(document.documentElement);
+    var v = function (name, fallback) {
+      return css.getPropertyValue(name).trim() || fallback;
+    };
+    return {
+      bg: v("--doc-bg", fixed.bg),
+      ink: v("--ui-text", fixed.ink),
+      muted: v("--ui-muted", fixed.muted),
+      grid: v("--ui-border", fixed.grid),
+      tones: TONES.map(function (name, i) {
+        return v("--tone-" + name, fixed.tones[i]);
+      }),
+    };
+  };
+
   /** An SVG element as markup a picture can be made of. */
   function svgMarkup(svg) {
     var copy = svg.cloneNode(true);
@@ -121,6 +153,14 @@
       attributes: true,
       attributeFilter: ["data-theme"],
     });
+    // Another theme in the same appearance: its colours, drawn again.
+    var themeStyle = document.getElementById("textus-theme");
+    if (themeStyle)
+      new MutationObserver(draw).observe(themeStyle, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
     api.onExport(async function (options) {
       await drawing;
       if (!last || !problem.hidden) return null;

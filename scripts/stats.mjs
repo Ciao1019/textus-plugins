@@ -1,27 +1,47 @@
-// Each plugin's installs and dates for the market (build.mjs reads them):
-// the downloads of every release of it (`<id>-v<version>`, its zip), the
-// first release's date and the latest's. GitHub counts each download;
-// Textus itself sends nothing. Run by the release workflow, with GH_TOKEN,
-// before the build: `node scripts/stats.mjs > dist/stats.json`.
+// What the market shows of each plugin and skill beside its manifest
+// (build.mjs reads it): installs, ever and in the last 30 days, from
+// Textus's anonymous install counts (textus.catvinci.com/api/ext/stats;
+// the app's services/ext-stats), and a plugin's first and latest release
+// dates from GitHub. Counts the endpoint can't give are left out. Run by
+// the release workflow, with GH_TOKEN, before the build:
+// `node scripts/stats.mjs > dist/stats.json`.
 
 const REPO = "CatVinci-Studio/textus-plugins";
+const EXT_STATS = "https://textus.catvinci.com/api/ext/stats";
 
-/** The stats of `releases` (GitHub's release objects), by plugin id. */
-export function statsOf(releases) {
+/** Each plugin's first and latest release dates, from `releases`
+ *  (GitHub's release objects, `<id>-v<version>`), by id. */
+export function datesOf(releases) {
   const out = {};
   for (const release of releases) {
     const m = /^(.+)-v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.exec(release.tag_name);
     if (!m || release.draft) continue;
-    const id = m[1];
-    const zips = (release.assets ?? []).filter((a) => a.name.endsWith(".zip"));
-    const downloads = zips.reduce((n, a) => n + (a.download_count ?? 0), 0);
     const date = (release.published_at ?? release.created_at ?? "").slice(0, 10);
-    const s = (out[id] ??= { installs: 0, published: date, updated: date });
-    s.installs += downloads;
+    const s = (out[m[1]] ??= { published: date, updated: date });
     if (date && date < s.published) s.published = date;
     if (date && date > s.updated) s.updated = date;
   }
   return out;
+}
+
+/** `installs` and `installs30` of each extension of `kind` in the
+ *  endpoint's answer `counts`, by id. */
+export function installsOf(counts, kind) {
+  const out = {};
+  for (const [id, s] of Object.entries(counts?.[kind] ?? {}))
+    if (Number.isInteger(s?.installs) && Number.isInteger(s?.installs30))
+      out[id] = { installs: s.installs, installs30: s.installs30 };
+  return out;
+}
+
+/** dist/stats.json: by kind, then id. */
+export function statsOf(releases, counts) {
+  const dates = datesOf(releases);
+  const plugins = installsOf(counts, "plugin");
+  const plugin = {};
+  for (const id of new Set([...Object.keys(dates), ...Object.keys(plugins)]))
+    plugin[id] = { ...plugins[id], ...dates[id] };
+  return { plugin, skill: installsOf(counts, "skill") };
 }
 
 async function releases() {
@@ -45,5 +65,20 @@ async function releases() {
   }
 }
 
+/** The install counts, or null when the endpoint can't be read: the
+ *  catalog is then built without them. */
+export async function counts(url = EXT_STATS) {
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(20_000) });
+    if (!response.ok) throw new Error(`${response.status}`);
+    return await response.json();
+  } catch (err) {
+    console.error(`install counts left out: ${url}: ${err.message}`);
+    return null;
+  }
+}
+
 if (import.meta.url === `file://${process.argv[1]}`)
-  console.log(JSON.stringify(statsOf(await releases()), null, 2));
+  console.log(
+    JSON.stringify(statsOf(await releases(), await counts()), null, 2),
+  );

@@ -1,7 +1,7 @@
 {
   "id": "catvinci.quick-notes",
   "name": "%name%",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "publisher": "catvinci",
   "author": "CatVinci Studio",
   "description": "%description%",
@@ -9,8 +9,9 @@
   "license": "MIT",
   "repository": "https://github.com/CatVinci-Studio/textus-plugins",
   "engines": {
-    "textus": ">=1.3.0-beta.2"
+    "textus": ">=1.3.2"
   },
+  "platforms": ["desktop"],
   "main": "host.js",
   "permissions": [
     "editor.write"
@@ -70,7 +71,8 @@
       "placeholder": "Write something…",
       "search": "Search notes",
       "deleted": "Note deleted",
-      "undo": "Undo"
+      "undo": "Undo",
+      "actions": "Actions"
     },
     "zh": {
       "name": "快速笔记",
@@ -87,7 +89,8 @@
       "placeholder": "写点什么…",
       "search": "搜索笔记",
       "deleted": "已删除笔记",
-      "undo": "撤销"
+      "undo": "撤销",
+      "actions": "操作"
     },
     "zh-Hant": {
       "name": "快速筆記",
@@ -104,7 +107,8 @@
       "placeholder": "寫點什麼…",
       "search": "搜尋筆記",
       "deleted": "已刪除筆記",
-      "undo": "復原"
+      "undo": "復原",
+      "actions": "操作"
     },
     "ja": {
       "name": "クイックノート",
@@ -121,7 +125,8 @@
       "placeholder": "何か書く…",
       "search": "ノートを検索",
       "deleted": "ノートを削除しました",
-      "undo": "元に戻す"
+      "undo": "元に戻す",
+      "actions": "操作"
     },
     "ko": {
       "name": "빠른 메모",
@@ -138,7 +143,8 @@
       "placeholder": "무언가 적어 보세요…",
       "search": "노트 검색",
       "deleted": "노트를 삭제했습니다",
-      "undo": "실행 취소"
+      "undo": "실행 취소",
+      "actions": "작업"
     },
     "es": {
       "name": "Notas rápidas",
@@ -155,7 +161,8 @@
       "placeholder": "Escribe algo…",
       "search": "Buscar notas",
       "deleted": "Nota eliminada",
-      "undo": "Deshacer"
+      "undo": "Deshacer",
+      "actions": "Acciones"
     },
     "fr": {
       "name": "Notes rapides",
@@ -172,7 +179,8 @@
       "placeholder": "Écrivez quelque chose…",
       "search": "Rechercher dans les notes",
       "deleted": "Note supprimée",
-      "undo": "Annuler"
+      "undo": "Annuler",
+      "actions": "Actions"
     },
     "de": {
       "name": "Schnellnotizen",
@@ -189,7 +197,8 @@
       "placeholder": "Schreib etwas…",
       "search": "Notizen durchsuchen",
       "deleted": "Notiz gelöscht",
-      "undo": "Rückgängig"
+      "undo": "Rückgängig",
+      "actions": "Aktionen"
     },
     "ru": {
       "name": "Быстрые заметки",
@@ -206,7 +215,8 @@
       "placeholder": "Напишите что-нибудь…",
       "search": "Поиск по заметкам",
       "deleted": "Заметка удалена",
-      "undo": "Отменить"
+      "undo": "Отменить",
+      "actions": "Действия"
     },
     "pt": {
       "name": "Notas rápidas",
@@ -223,7 +233,8 @@
       "placeholder": "Escreva algo…",
       "search": "Pesquisar notas",
       "deleted": "Nota excluída",
-      "undo": "Desfazer"
+      "undo": "Desfazer",
+      "actions": "Ações"
     }
   }
 }

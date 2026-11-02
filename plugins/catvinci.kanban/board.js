@@ -28,6 +28,7 @@
   /** An inline field over `node`'s text; `done` gets the new text. */
   function editInPlace(node, value, multiline, done) {
     const field = document.createElement(multiline ? "textarea" : "input");
+    field.className = "inline-field";
     field.value = value;
     node.replaceWith(field);
     field.focus();
@@ -76,8 +77,11 @@
 
   function removeButton(onClick) {
     const b = document.createElement("button");
-    b.className = "icon remove";
-    b.textContent = "✕";
+    b.className = "tx-icon-button remove";
+    const glyph = document.createElement("span");
+    glyph.className = "tx-icon";
+    glyph.dataset.icon = "close";
+    b.append(glyph);
     b.setAttribute("aria-label", t("remove"));
     b.onclick = onClick;
     return b;
@@ -85,10 +89,11 @@
 
   function cardNode(list, card) {
     const li = document.createElement("li");
-    li.className = "card" + (card.done ? " done" : "");
+    li.className = "tx-card card" + (card.done ? " done" : "");
     li.draggable = true;
     const box = document.createElement("input");
     box.type = "checkbox";
+    box.className = "ui-check";
     box.checked = card.done;
     box.setAttribute("aria-label", card.text);
     box.onchange = () => {
@@ -208,8 +213,11 @@
       changed();
     });
     const add = document.createElement("button");
-    add.className = "add-card";
-    add.textContent = t("addCard");
+    add.className = "tx-button small add-card";
+    const plus = document.createElement("span");
+    plus.className = "tx-icon";
+    plus.dataset.icon = "plus";
+    add.append(plus, t("addCard"));
     add.onclick = () => {
       const card = { text: "", done: false };
       list.cards.push(card);

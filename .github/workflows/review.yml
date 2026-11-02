@@ -6,7 +6,7 @@ name: review
 # A failed check fails the run; warnings wait for a maintainer.
 on:
   pull_request_target:
-    paths: ["community/**"]
+    paths: ["community/*.json"]
 
 permissions:
   contents: read
